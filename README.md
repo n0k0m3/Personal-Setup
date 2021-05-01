@@ -6,3 +6,5 @@ This repo contains all of my personal codes and guides for personal setups. No p
 ```
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/n0k0m3/Personal-Setup/main/install_zsh.sh)"
 ```
+
+## [GPU Passthrough Guide](GPU_Passthrough/Single_GPU_Passthrough_Guide.md) (linked)
