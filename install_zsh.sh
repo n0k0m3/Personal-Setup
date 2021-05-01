@@ -1,7 +1,5 @@
 #!/bin/sh
 
-sh_c='sh -c'
-
 get_distribution() {
 	lsb_dist=""
 	# Every system that we officially support has /etc/os-release
