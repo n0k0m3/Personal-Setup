@@ -12,20 +12,52 @@ Installing dependencies and setting up notebooks is usually a PITA: installing C
 
 Nvidia driver is installed (using `nvidia-installer-dkms` from EndeavourOS or from Arch repo, other distro DIY). Note: `nouveau` (default open-source NVIDIA driver) is not supported
 
-## Need nvidia-container toolkit and installed docker
+## Install docker
 
 **Arch**: [(Arch Wiki guide)](https://wiki.archlinux.org/index.php/docker#Run_GPU_accelerated_Docker_containers_with_NVIDIA_GPUs)
 
 Install `docker`
 ```sh
 sudo pacman -S docker
+```
+
+## Problem with Docker and BTRFS (copied from [here](https://github.com/egara/arch-btrfs-installation/blob/master/README.md)) ##
+More than a problem is a caveat. If the main filesystem for root is BTRFS, docker will use BTRFS storage driver (Docker selects the storage driver automatically depending on the system's configuration when it is installed) to create and manage all the docker images, layers and volumes. It is ok, but there is a problem with snapshots. Because **/var/lib/docker** is created to store all this stuff in a BTRFS subvolume which is into root subvolume, all this data won't be included within the snapshots. In order to allow all this data be part of the snapshots, we can change the storage driver used by Docker. The preferred one is **overlay2** right now. Please, check out [this reference](https://docs.docker.com/engine/userguide/storagedriver/selectadriver/) in order to select the proper storage driver for you. You must know that depending on the filesystem you have for root, some of the storage drivers will not be allowed.
+
+For using overlay2:
+
+- Create a file called **storage-driver.conf** within **/etc/systemd/system/docker.service.d/**. If the directory doens't exist, create the directory first.
+
+```sh
+sudo mkdir -p /etc/systemd/system/docker.service.d/
+sudo nano /etc/systemd/system/docker.service.d/storage-driver.conf
+```
+
+- This is the content of **storage-driver.conf**
+
+```sh
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd -H fd:// --storage-driver=overlay2
+```
+
+- Create **/var/lib/docker/** and disable CoW (copy on write for BTRFS):
+
+```sh
+sudo chattr +C /var/lib/docker
+```
+
+- Enable and start the service
+
+```sh
 sudo systemctl enable --now dockerd
 ```
-(OPTIONAL, WARNING: insecure) Run docker (root) as user
+(OPTIONAL, WARNING: insecure) Add your user to docker group in order to use docker command without `sudo`
 ```sh
 sudo groupadd docker
 sudo usermod -aG docker $USER
 ```
+## Install nvidia-container toolkit for GPU access
 Install `nvidia-container-toolkit`(AUR)
 ```sh
 yay nvidia-container-toolkit
