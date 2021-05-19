@@ -105,7 +105,7 @@ Finally restart `docker` daemon:
 sudo systemctl restart dockerd
 ```
 
-## Run jupyter with port 6006 exposed for Tensorboard
+## Run jupyter-tensorflow with port 6006 exposed for Tensorboard
 Change directory to path containing jupyter folder, then run:
 ```sh
 export JUPYTER_PATH=$(realpath jupyter)
@@ -124,4 +124,25 @@ You can change the build tag `nightly-gpu-jupyter` to any other support build ta
 Next time to start the container:
 ```sh
 docker start tf
+```
+
+## Run jupyter datascience notebook from jupyter docker stack
+Change directory to path containing jupyter folder, then run:
+```sh
+export JUPYTER_PATH=$(realpath jupyter)
+
+docker run -d \
+    --name ds \
+    -p 6006:6006 \
+    -p 8888:8888 \
+    -v $JUPYTER_PATH:/home/jovyan/ \
+    -e JUPYTER_ENABLE_LAB=yes \
+    -e GRANT_SUDO=yes \
+    -e RESTARTABLE=yes \
+    jupyter/tensorflow-notebook
+```
+
+Next time to start the container:
+```sh
+docker start ds
 ```
