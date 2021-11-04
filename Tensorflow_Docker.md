@@ -58,6 +58,7 @@ Reboot
 
 #### Reasoning and alternative (main) fix:
 ```
+(From AUR package)
 Warning about nvidia containers!
 
 Systemd v247.2-2 introduced a unified cgroup change which has somewhat
@@ -127,16 +128,16 @@ docker run -d --gpus all \
     -v $JUPYTER_PATH:/tf/notebooks \
     -v $JUPYTER_PATH/.jupyter:/root/.jupyter \
     -v $JUPYTER_PATH/.kaggle:/root/.kaggle \
-    tensorflow/tensorflow:nightly-gpu-jupyter
+    tensorflow/tensorflow:latest-gpu-jupyter
 ```
-You can change the build tag `nightly-gpu-jupyter` to any other support build tag on [DockerHub](https://hub.docker.com/r/tensorflow/tensorflow/tags). However I'd suggest sticking with `nightly-gpu-jupyter` or at earliest `latest-gpu-jupyter` or `latest-devel-gpu` (the latter doesn't have Jupyter Notebook)
+You can change the build tag `latest-gpu-jupyter` to any other support build tag on [DockerHub](https://hub.docker.com/r/tensorflow/tensorflow/tags). However I'd suggest sticking with `latest-gpu-jupyter` or `nightly-gpu-jupyter`
 
 Next time to start the container:
 ```sh
 docker start tf
 ```
 
-## Run jupyter datascience notebook from jupyter docker stack
+<!-- ## Run jupyter datascience notebook from jupyter docker stack
 Change directory to path containing jupyter folder, then run:
 ```sh
 export JUPYTER_PATH=$(realpath jupyter)
@@ -156,6 +157,22 @@ Next time to start the container:
 ```sh
 docker start ds
 ```
+ -->
+## Setup
+
+- `tensorflow/tensorflow:latest-gpu-jupyter` as `tf` for DL/AI training tasks
+    - 6006 - Tensorboard
+    - 8888 - JupyterLab notebook
+- `n0k0m3/pyspark-notebook-deltalake-docker` as `ds` for PySpark + Deltalake support on `jupyter/pyspark-notebook`
+    - 8888 - JupyterLab notebook
+- `rapidsai/rapidsai:21.10-cuda11.4-runtime-ubuntu20.04-py3.8` as `ra` for GPU accelerated DataFrame
+    - 8888 - JupyterLab notebook
+    - 8786 - Dask scheduler
+    - 8787 - Dask diagnostic web server
+
+## TODO
+
+- [ ] `docker-compose` that pull image from hub, name container, exposes ports, and mount volumes paths
 
 ## Problem with Docker and BTRFS (copied from [here](https://github.com/egara/arch-btrfs-installation/blob/master/README.md)) ##
 More than a problem is a caveat. If the main filesystem for root is BTRFS, docker will use BTRFS storage driver (Docker selects the storage driver automatically depending on the system's configuration when it is installed) to create and manage all the docker images, layers and volumes. It is ok, but there is a problem with snapshots. Because **/var/lib/docker** is created to store all this stuff in a BTRFS subvolume which is into root subvolume, all this data won't be included within the snapshots. In order to allow all this data be part of the snapshots, we can change the storage driver used by Docker. The preferred one is **overlay2** right now. Please, check out [this reference](https://docs.docker.com/engine/userguide/storagedriver/selectadriver/) in order to select the proper storage driver for you. You must know that depending on the filesystem you have for root, some of the storage drivers will not be allowed.
