@@ -6,7 +6,7 @@ Following guide was tested on EndeavourOS and Manjaro (Arch-based) Linux distro.
 
 Installing dependencies and setting up notebooks is usually a PITA: installing CUDA with CuDNN and TensorRT doesn't have a common and easy to follow guide, along with recent (not recent) release of python 3.9, most ML/DL packages are not updated to this wheel. Also setting up `venv` is hard to maintain and migrate as you have to backup the whole environment to other machine.
 
-`tensorflow/tensorflow` docker container solves this problem by allowing user to backup personalized config, while don't have to deal with maintaining the environment. Another perks is you can choose
+`tensorflow/tensorflow` docker container solves this problem by allowing user to backup personalized config, while don't have to deal with maintaining the environment.
 
 ## Requirements
 
