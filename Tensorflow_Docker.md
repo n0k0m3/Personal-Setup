@@ -1,6 +1,6 @@
 # Running Tensorflow with GPU support (NVIDIA) in docker
 
-Following guide was tested on EndeavourOS (Arch-based) Linux distro.
+Following guide was tested on EndeavourOS and Manjaro (Arch-based) Linux distro.
 
 ## Why?
 
@@ -10,7 +10,7 @@ Installing dependencies and setting up notebooks is usually a PITA: installing C
 
 ## Requirements
 
-Nvidia driver is installed (using `nvidia-installer-dkms` from EndeavourOS or from Arch repo, other distro DIY). Note: `nouveau` (default open-source NVIDIA driver) is not supported
+Nvidia driver is installed (using `nvidia-installer-dkms` from EndeavourOS or from Arch repo, on Manjaro use their hardware configurator, for other distro DIY). Note: `nouveau` (default open-source NVIDIA driver) is not supported
 
 ## Install docker
 
@@ -21,36 +21,9 @@ Install `docker`
 sudo pacman -S docker
 ```
 
-## Problem with Docker and BTRFS (copied from [here](https://github.com/egara/arch-btrfs-installation/blob/master/README.md)) ##
-More than a problem is a caveat. If the main filesystem for root is BTRFS, docker will use BTRFS storage driver (Docker selects the storage driver automatically depending on the system's configuration when it is installed) to create and manage all the docker images, layers and volumes. It is ok, but there is a problem with snapshots. Because **/var/lib/docker** is created to store all this stuff in a BTRFS subvolume which is into root subvolume, all this data won't be included within the snapshots. In order to allow all this data be part of the snapshots, we can change the storage driver used by Docker. The preferred one is **overlay2** right now. Please, check out [this reference](https://docs.docker.com/engine/userguide/storagedriver/selectadriver/) in order to select the proper storage driver for you. You must know that depending on the filesystem you have for root, some of the storage drivers will not be allowed.
-
-For using overlay2:
-
-- Create a file called **storage-driver.conf** within **/etc/systemd/system/docker.service.d/**. If the directory doens't exist, create the directory first.
-
+Enable and start the service
 ```sh
-sudo mkdir -p /etc/systemd/system/docker.service.d/
-sudo nano /etc/systemd/system/docker.service.d/storage-driver.conf
-```
-
-- This is the content of **storage-driver.conf**
-
-```sh
-[Service]
-ExecStart=
-ExecStart=/usr/bin/dockerd -H fd:// --storage-driver=overlay2
-```
-
-- Create **/var/lib/docker/** and disable CoW (copy on write for BTRFS):
-
-```sh
-sudo chattr +C /var/lib/docker
-```
-
-- Enable and start the service
-
-```sh
-sudo systemctl enable --now dockerd
+sudo systemctl enable --now docker.service
 ```
 (OPTIONAL, WARNING: insecure) Add your user to docker group in order to use docker command without `sudo`
 ```sh
@@ -63,7 +36,13 @@ Install `nvidia-container-toolkit`(AUR)
 yay nvidia-container-toolkit
 ```
 
-Add this kernel parameter to `/etc/default/grub`
+### **Notes:**
+Due to new unified cgroup in `systemd` we need to apply this fix that disable new cgroup v2 interface:
+
+```
+sudo nano /etc/default/grub
+````
+Add this kernel parameter
 ```sh
 GRUB_CMDLINE_LINUX_DEFAULT="... systemd.unified_cgroup_hierarchy=false"
 ```
@@ -71,7 +50,36 @@ Regenerate `grub`
 ```sh
 grub-mkconfig -o /boot/grub/grub.cfg
 ```
+Tell `nvidia-container-runtime` to use old cgroups again by setting `no-cgroups = false` in:
+```
+sudo nano /etc/nvidia-container-runtime/config.toml
+```
 Reboot
+
+#### Reasoning and alternative (main) fix:
+```
+Warning about nvidia containers!
+
+Systemd v247.2-2 introduced a unified cgroup change which has somewhat
+broken nvidia-container's access to the handles in
+/sys/fs/cgroup/devices.
+
+If you are using Docker you will then need to explicitly allow access
+to the nvidia devices like:
+
+docker run ... --gpus all --device /dev/nvidia0 --device \
+    /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device \
+    /dev/nvidiactl ...
+
+or by using a docker-compose which esposes the devices with:
+
+devices:
+  - /dev/nvidia0:/dev/nvidia0
+  - /dev/nvidiactl:/dev/nvidiactl
+  - /dev/nvidia-modeset:/dev/nvidia-modeset
+  - /dev/nvidia-uvm:/dev/nvidia-uvm
+  - /dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools
+```
 
 **Others distros**: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker
 
@@ -96,13 +104,15 @@ Add this `json` to the file
 Update `subuid/gid`:
 ```sh
 # Append sub-id to these files
+sudo touch /etc/subuid
+sudo touch /etc/subgid
 echo "n0k0m3:1000:65536" >> sudo tee -a /etc/subuid
 echo "n0k0m3:1001:65536" >> sudo tee -a /etc/subgid
 ```
 
 Finally restart `docker` daemon:
 ```sh
-sudo systemctl restart dockerd
+sudo systemctl restart docker.service
 ```
 
 ## Run jupyter-tensorflow with port 6006 exposed for Tensorboard
@@ -145,4 +155,35 @@ docker run -d \
 Next time to start the container:
 ```sh
 docker start ds
+```
+
+## Problem with Docker and BTRFS (copied from [here](https://github.com/egara/arch-btrfs-installation/blob/master/README.md)) ##
+More than a problem is a caveat. If the main filesystem for root is BTRFS, docker will use BTRFS storage driver (Docker selects the storage driver automatically depending on the system's configuration when it is installed) to create and manage all the docker images, layers and volumes. It is ok, but there is a problem with snapshots. Because **/var/lib/docker** is created to store all this stuff in a BTRFS subvolume which is into root subvolume, all this data won't be included within the snapshots. In order to allow all this data be part of the snapshots, we can change the storage driver used by Docker. The preferred one is **overlay2** right now. Please, check out [this reference](https://docs.docker.com/engine/userguide/storagedriver/selectadriver/) in order to select the proper storage driver for you. You must know that depending on the filesystem you have for root, some of the storage drivers will not be allowed.
+
+For using overlay2:
+
+- Create a file called **storage-driver.conf** within **/etc/systemd/system/docker.service.d/**. If the directory doens't exist, create the directory first.
+
+```sh
+sudo mkdir -p /etc/systemd/system/docker.service.d/
+sudo nano /etc/systemd/system/docker.service.d/storage-driver.conf
+```
+
+- This is the content of **storage-driver.conf**
+
+```sh
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd -H fd:// --storage-driver=overlay2
+```
+
+- Create **/var/lib/docker/** and disable CoW (copy on write for BTRFS):
+
+```sh
+sudo chattr +C /var/lib/docker
+```
+
+- Restart docker
+```
+sudo systemctl restart docker.service
 ```
