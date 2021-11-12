@@ -38,21 +38,11 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 
 # agnoster theme with font. Note Color: Solarized Dark; Font:Powerline-patched Meslo
 
-# Add PATH to .zshrc
-echo -e "export PATH=\$HOME/.local/bin:\$HOME/bin:/usr/local/bin:\$PATH\n$(cat ~/.zshrc)" > ~/.zshrc
+# # Add PATH to .zshrc
+# echo -e "export PATH=\$HOME/.local/bin:\$HOME/bin:/usr/local/bin:\$PATH\n$(cat ~/.zshrc)" > ~/.zshrc
 
-# Change theme to agnoster
-sed -i -e 's/robbyrussell/agnoster/g' ~/.zshrc
+# # Change theme to agnoster
+# sed -i -e 's/robbyrussell/agnoster/g' ~/.zshrc
 
-# Fix username@hostname terminal
-echo -e "DEFAULT_USER=\`whoami\`\n$(cat ~/.zshrc)" > ~/.zshrc
-
-# Install powerline fonts
-# clone
-git clone https://github.com/powerline/fonts.git --depth=1
-# install
-cd fonts
-./install.sh
-# clean-up a bit
-cd ..
-rm -rf fonts
+# # Fix username@hostname terminal
+# echo -e "DEFAULT_USER=\`whoami\`\n$(cat ~/.zshrc)" > ~/.zshrc

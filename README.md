@@ -10,9 +10,9 @@ Or append to `/etc/fstab`:
 UUID=<disk_UUID>   <mount_point>    <format>    uid=1000,gid=1001,umask=022,noatime 0 1 
 ```
 
-## Install ZSH
+## Install ZSH, Oh-My-Zsh, plugins, and configs
 ```sh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/n0k0m3/Personal-Setup/main/install_zsh.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/n0k0m3/Personal-Setup/main/setup.sh)"
 ```
 
 ## [Tensorflow GPU Docker](Tensorflow_Docker.md)
