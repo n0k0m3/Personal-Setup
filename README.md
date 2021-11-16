@@ -2,19 +2,10 @@
 
 This repo contains all of my personal codes and guides for personal setups. No personal info is here and most scripts work with all common consumer-based distros (Debian/Ubuntu, Arch, maybe RHEL-based, Fedora for some)
 
-## `fstab` mount with user permssion
+## [Setting up new Arch install](Setting_up_Arch/README.md)
 
-Use KDE/GNOME partition manager to manage mount point and use mount options: `uid=1000,gid=1001,umask=022`  
-Or append to `/etc/fstab`:
-```
-UUID=<disk_UUID>   <mount_point>    <format>    uid=1000,gid=1001,umask=022,noatime 0 1 
-```
+## [Tips and tricks](Tips_and_tricks.md)
 
-## Install ZSH, Oh-My-Zsh, plugins, and configs
-```sh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/n0k0m3/Personal-Setup/main/setup.sh)"
-```
-
-## [Tensorflow GPU Docker](Tensorflow_Docker.md)
+## [Tensorflow GPU Docker](Setting_up_Arch/Tensorflow_Docker.md)
 
 ## [VM and Single GPU Passthrough Guide](GPU_Passthrough/Single_GPU_Passthrough_Guide.md)

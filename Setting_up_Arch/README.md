@@ -1,4 +1,8 @@
 # Setting up Arch
+## Install ZSH, Oh-My-Zsh, plugins, and configs
+```sh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/n0k0m3/Personal-Setup/main/Setting_up_Arch/setup.sh)"
+```
 ## Setting up pacman and makepkg config
 Set `ParallelDownloads = 10`:
 ```sh
