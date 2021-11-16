@@ -106,7 +106,7 @@ IOMMU group 23
 ```
 Here our NVIDIA GPU is in group 23 and well isolated. Note the `[NORES]` flag as we'll discuss this later in the guide. For now remember device IDs `09:00.0`, `09:00.1` to passthrough
 
-If your PCIe devices are not well-isolated, check [ACS Override Kernel](https://queuecumber.gitlab.io/linux-acs-override/) and [ACS Patching Guide](https://github.com/bryansteiner/gpu-passthrough-tutorial#----acs-override-patch-optional). However, I wouldn't recommend this as it is really insecure ([source](https://www.reddit.com/r/VFIO/comments/bvif8d/official_reason_why_acs_override_patch_is_not_in/)). Better sell your motherboard and get one with better IOMMU grouping.
+If your PCIe devices are not well-isolated, ~~check [ACS Override Kernel](https://queuecumber.gitlab.io/linux-acs-override/) and [ACS Patching Guide](https://github.com/bryansteiner/gpu-passthrough-tutorial#----acs-override-patch-optional). However, I wouldn't recommend this as it is really insecure ([source](https://www.reddit.com/r/VFIO/comments/bvif8d/official_reason_why_acs_override_patch_is_not_in/)). Better sell your motherboard and get one with better IOMMU grouping.~~ install linux-zen or linux-xanmod kernel (or any kernel that have ACS override patches) and add `pcie_acs_override=downstream,multifunction` to the boot options in `/etc/default/grub`
 
 ### 2.2 Installing Packages
 
