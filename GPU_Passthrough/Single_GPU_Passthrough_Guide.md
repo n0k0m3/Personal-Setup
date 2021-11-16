@@ -27,7 +27,7 @@
     - [USB Controller Passthrough](#usb-controller-passthrough)
     - [Video card driver virtualisation detection](#video-card-driver-virtualisation-detection)
   - [Libvirt Hooks](#libvirt-hooks)
-  - [vBIOS Patching](#vbios-patching)
+  - [vBIOS Patching (No need for my setup)](#vbios-patching-no-need-for-my-setup)
 
 ## 1. Notes
 
@@ -55,7 +55,7 @@ Varies and depends on motherboard. Follow this guide: [Arch Wiki](https://wiki.a
 
 1. Add these flags to the end of `GRUB_CMDLINE_LINUX_DEFAULT` variable
 
-| nano /etc/default/grub                                                           |
+| `nano /etc/default/grub`                                                           |
 | -------------------------------------------------------------------------------- |
 | For Intel CPU                                                                    |
 | `GRUB_CMDLINE_LINUX_DEFAULT="... intel_iommu=on iommu=pt rd.driver.pre=vfio-pc"` |
@@ -159,7 +159,7 @@ virsh net-autostart default
 You should add your user to **_libvirt_** group to be able to run VM without root. And, **_input_** and **_kvm_** group for passing input devices.
 
 ```sh
-usermod -aG kvm,input,libvirt <username>
+usermod -aG kvm,input,libvirt $USER
 ```
 
 - Download [virtio](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso) driver for windows.
@@ -307,6 +307,14 @@ NVIDIA guest drivers prior to version 465 require hiding the KVM CPU leaf (avoid
 Libvirt hooks automate the process of running specific tasks during VM state change. \
 More info at: [PassthroughPost](https://passthroughpo.st/simple-per-vm-libvirt-hooks-with-the-vfio-tools-hook-helper/)
 
+Copy `hooks` folder to `/etc/libvirt/`
+```sh
+cp -R hooks /etc/libvirt/
+```
+
+Edit `/etc/libvirt/hooks/kvm.conf` with regard to the output of `iommu.txt`
+
+<!---
 <details>
   <summary><b>Create Libvirt Hook</b></summary>
 
@@ -455,8 +463,9 @@ systemctl start display-manager
   </tr>
   </table>
 </details>
+-->
 
-## vBIOS Patching
+## vBIOS Patching (No need for my setup)
 
 [Return to top &#x21ba;](#table-of-content)
 
