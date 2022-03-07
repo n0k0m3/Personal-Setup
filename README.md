@@ -6,6 +6,6 @@ This repo contains all of my personal codes and guides for personal setups. No p
 
 ## [Tips and tricks](Tips_and_tricks.md)
 
-## [Tensorflow GPU Docker](Setting_up_Arch/Tensorflow_Docker.md)
+## [Tensorflow GPU Docker](Tensorflow_Docker.md)
 
 ## [VM and Single GPU Passthrough Guide](GPU_Passthrough/Single_GPU_Passthrough_Guide.md)
