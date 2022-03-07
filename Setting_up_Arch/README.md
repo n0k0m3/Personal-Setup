@@ -1,7 +1,12 @@
 # Setting up Arch
-## Install ZSH, Oh-My-Zsh, plugins, and configs
+## Install [`zsh4humans`](https://github.com/romkatv/zsh4humans)
+I don't need anything more fancy than romkatv's `zsh4humans`.
 ```sh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/n0k0m3/Personal-Setup/main/Setting_up_Arch/setup.sh)"
+if command -v curl >/dev/null 2>&1; then
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/romkatv/zsh4humans/v5/install)"
+else
+  sh -c "$(wget -O- https://raw.githubusercontent.com/romkatv/zsh4humans/v5/install)"
+fi
 ```
 ## Setting up pacman and makepkg config
 Set `ParallelDownloads = 10`:
