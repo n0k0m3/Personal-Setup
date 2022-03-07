@@ -1,6 +1,7 @@
 import subprocess
+import sys
 will_install = []
-with open("installed.txt","r") as f:
+with open(sys.argv[1],"r") as f:
     reader = f.read()
     reader = reader.split("\n")[:-1]
     for r in reader:

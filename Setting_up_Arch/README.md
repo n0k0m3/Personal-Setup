@@ -24,5 +24,5 @@ python3 read_install.py
 ```
 ### Update `installed.txt` with current setup
 ```sh
-pacman -Qqet >> installed.txt
+pacman -Qqet >> installed.log
 ```
