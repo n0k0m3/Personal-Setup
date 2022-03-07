@@ -22,12 +22,13 @@
     - [2.2 Installing Packages](#22-installing-packages)
     - [2.3 Enable required services](#23-enable-required-services)
   - [3. Setup Virtual Machine](#3-setup-virtual-machine)
-    - [3.1 Attaching PCI devices](#31-attaching-pci-devices)
-    - [Keyboard/Mouse/Audio Passthrough](#keyboardmouseaudio-passthrough)
-    - [USB Controller Passthrough](#usb-controller-passthrough)
-    - [Video card driver virtualisation detection](#video-card-driver-virtualisation-detection)
-  - [Libvirt Hooks](#libvirt-hooks)
-  - [vBIOS Patching (No need for my setup)](#vbios-patching-no-need-for-my-setup)
+    - [3.1 Setting up VM and install Guest OS (Windows 10)](#31-setting-up-vm-and-install-guest-os-windows-10)
+    - [3.2 Attaching PCI devices](#32-attaching-pci-devices)
+      - [3.2.1 Video card driver virtualisation detection](#321-video-card-driver-virtualisation-detection)
+    - [3.3 Keyboard/Mouse/Audio Passthrough](#33-keyboardmouseaudio-passthrough)
+    - [3.4 USB Controller Passthrough](#34-usb-controller-passthrough)
+  - [4. Libvirt Hooks](#4-libvirt-hooks)
+  - [5. vBIOS Patching (No need for my setup)](#5-vbios-patching-no-need-for-my-setup)
 
 ## 1. Notes
 
@@ -104,9 +105,10 @@ IOMMU group 23
 [NORES]	09:00.1 Audio device [0403]: NVIDIA Corporation Device [10de:228b] (rev a1)
 ...
 ```
-Here our NVIDIA GPU is in group 23 and well isolated. Note the `[NORES]` flag as we'll discuss this later in the guide. For now remember device IDs `09:00.0`, `09:00.1` to passthrough
+Here our NVIDIA GPU is in group 23 and well isolated. Note the `[NORES]` flag means that the device won't power-cycle properly after VM shutdown ([Source](https://wiki.archlinux.org/title/PCI_passthrough_via_OVMF#Passing_through_a_device_that_does_not_support_resetting)). For now remember device IDs `09:00.0`, `09:00.1` to passthrough
 
-If your PCIe devices are not well-isolated, ~~check [ACS Override Kernel](https://queuecumber.gitlab.io/linux-acs-override/) and [ACS Patching Guide](https://github.com/bryansteiner/gpu-passthrough-tutorial#----acs-override-patch-optional). However, I wouldn't recommend this as it is really insecure ([source](https://www.reddit.com/r/VFIO/comments/bvif8d/official_reason_why_acs_override_patch_is_not_in/)). Better sell your motherboard and get one with better IOMMU grouping.~~ install linux-zen or linux-xanmod kernel (or any kernel that have ACS override patches) and add `pcie_acs_override=downstream,multifunction` to the boot options in `/etc/default/grub`
+If your PCIe devices are not well-isolated, ~~check [ACS Override Kernel](https://queuecumber.gitlab.io/linux-acs-override/) and [ACS Patching Guide](https://github.com/bryansteiner/gpu-passthrough-tutorial#----acs-override-patch-optional). However, I wouldn't recommend this as it is really insecure ([source](https://www.reddit.com/r/VFIO/comments/bvif8d/official_reason_why_acs_override_patch_is_not_in/)). Better sell your motherboard and get one with better IOMMU grouping.~~  
+Install `linux-zen` (available as binary) or any `linux-xanmod` (build from source) kernel (or any kernel that have ACS override patches) and add `pcie_acs_override=downstream,multifunction` to the boot options in `/etc/default/grub`. I don't need this for my system, but it's good to know.
 
 ### 2.2 Installing Packages
 
@@ -153,6 +155,16 @@ virsh net-autostart default
 
 ## 3. Setup Virtual Machine
 
+I already have a VM with Windows 10 installed, with SSD passthrough, backed up with all definitions in virsh xml file so I'll just import it.
+
+```sh
+virsh define <path-to-xml>/<vm-name>.xml
+```
+
+Following is the guide to create a VM similar to my setup.
+
+### 3.1 Setting up VM and install Guest OS (Windows 10)
+
 [Return to top &#x21ba;](#table-of-content)
 
 **_NOTE: You should replace win10 with your VM's name where applicable_** \
@@ -163,16 +175,16 @@ usermod -aG kvm,input,libvirt $USER
 ```
 
 - Download [virtio](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win.iso) driver for windows.
-- Launch **_virt-manager_** and create a new virtual machine. Select **_Customize before install_** on Final Step. \
-- In **_Overview_** section, set **_Chipset_** to **_Q35_**, and **_Firmware_** to **_UEFI_** using OVMF (Not tested with secboot so YMMV) \
-- In **_CPUs_** section, set **_CPU model_** to **_host-passthrough_**, and **_CPU Topology_** to whatever fits your system. \
-- For **_SATA_** disk of VM, set **_Disk Bus_** to **_virtio_**. \
-- In **_NIC_** section, set **_Device Model_** to **_virtio_** \
-- Add Hardware > CDROM: virtio-win.iso \
-- Now, **_Begin Installation_**. Windows can't detect the **_virtio disk_**, so you need to **_Load Driver_** and select **_virtio-iso/amd64/win10_** when prompted. \
+- Launch **_virt-manager_** and create a new virtual machine. Select **_Customize before install_** on Final Step.
+- In **_Overview_** section, set **_Chipset_** to **_Q35_**, and **_Firmware_** to **_UEFI_** using OVMF (Not tested with secboot so YMMV)
+- In **_CPUs_** section, set **_CPU model_** to **_host-passthrough_**, and **_CPU Topology_** to whatever fits your system.
+- For **_SATA_** disk of VM, set **_Disk Bus_** to **_virtio_**.
+- In **_NIC_** section, set **_Device Model_** to **_virtio_**
+- Add Hardware > CDROM: virtio-win.iso
+- Now, **_Begin Installation_**. Windows can't detect the **_virtio disk_**, so you need to **_Load Driver_** and select **_virtio-iso/amd64/win10_** when prompted.
 - After successful installation of Windows, install virtio drivers from virtio CDROM. You can then remove virtio iso.
 
-### 3.1 Attaching PCI devices
+### 3.2 Attaching PCI devices
 
 [Return to top &#x21ba;](#table-of-content)
 
@@ -180,13 +192,48 @@ usermod -aG kvm,input,libvirt $USER
 Remove `Channel Spice`, `Sound ich*` and other unnecessary devices.  
 Now, click on **_Add Hardware_**, select **_PCI Host Device_** and add the PCI Host devices for your GPU's VGA and HDMI Audio, in this example, `[09:00.0]` and `[09:00.1]`
 
-### Keyboard/Mouse/Audio Passthrough
+#### 3.2.1 Video card driver virtualisation detection
+
+[Return to top &#x21ba;](#table-of-content)
+
+Spoof Hyper-V Vendor ID for GPU guest drivers (AMD).
+
+```xml
+...
+<features>
+  ...
+  <hyperv>
+    ...
+    <vendor_id state='on' value='randomid'/>
+    ...
+  </hyperv>
+  ...
+</features>
+...
+```
+
+NVIDIA guest drivers prior to version 465 require hiding the KVM CPU leaf (avoid error 43):
+
+```xml
+...
+<features>
+  ...
+  <kvm>
+    <hidden state='on'/>
+  </kvm>
+  ...
+</features>
+...
+```
+
+
+### 3.3 Keyboard/Mouse/Audio Passthrough
 
 [Return to top &#x21ba;](#table-of-content)
 
 I won't be using passthrough as the latency and complicated setup is not worth it. Follow [USB Controller Passthrough](#usb-controller-passthrough)
 
-### USB Controller Passthrough
+### 3.4 USB Controller Passthrough
 
 [Return to top &#x21ba;](#table-of-content)
 
@@ -266,41 +313,7 @@ Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
 Due to [reset problem](https://wiki.archlinux.org/title/PCI_passthrough_via_OVMF#Passing_through_a_device_that_does_not_support_resetting), we need to figure out devices that can be power-cycled using linux. In group 18 one of our USB controller cannot be reset (`06:00.1`). Also LED controller, Wifi, etc. is bundled in this group, along with PCIe bridge, which is terrible to deal with and isolate. So we will not use this controller/controller group
 </details>
 
-### Video card driver virtualisation detection
-
-[Return to top &#x21ba;](#table-of-content)
-
-Spoof Hyper-V Vendor ID for GPU guest drivers (AMD).
-
-```xml
-...
-<features>
-  ...
-  <hyperv>
-    ...
-    <vendor_id state='on' value='randomid'/>
-    ...
-  </hyperv>
-  ...
-</features>
-...
-```
-
-NVIDIA guest drivers prior to version 465 require hiding the KVM CPU leaf (avoid error 43):
-
-```xml
-...
-<features>
-  ...
-  <kvm>
-    <hidden state='on'/>
-  </kvm>
-  ...
-</features>
-...
-```
-
-## Libvirt Hooks
+## 4. Libvirt Hooks
 
 [Return to top &#x21ba;](#table-of-content)
 
@@ -465,7 +478,7 @@ systemctl start display-manager
 </details>
 -->
 
-## vBIOS Patching (No need for my setup)
+## 5. vBIOS Patching (No need for my setup)
 
 [Return to top &#x21ba;](#table-of-content)
 
