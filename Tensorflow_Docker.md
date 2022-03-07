@@ -35,56 +35,16 @@ Install `nvidia-container-toolkit`(AUR)
 ```sh
 yay nvidia-container-toolkit
 ```
-
-### **Notes:**
-Due to new unified cgroup in `systemd` we need to apply this fix that disable new cgroup v2 interface:
-
-```
-sudo nano /etc/default/grub
-````
-Add this kernel parameter
+Restart `docker` service
 ```sh
-GRUB_CMDLINE_LINUX_DEFAULT="... systemd.unified_cgroup_hierarchy=false"
+sudo systemctl restart docker
 ```
-Regenerate `grub`
+Check if GPU is available inside docker
 ```sh
-grub-mkconfig -o /boot/grub/grub.cfg
-```
-Tell `nvidia-container-runtime` to use old cgroups again by setting `no-cgroups = false` in:
-```
-sudo nano /etc/nvidia-container-runtime/config.toml
-```
-Reboot
-
-#### Reasoning and alternative (main) fix:
-```
-(From AUR package)
-Warning about nvidia containers!
-
-Systemd v247.2-2 introduced a unified cgroup change which has somewhat
-broken nvidia-container's access to the handles in
-/sys/fs/cgroup/devices.
-
-If you are using Docker you will then need to explicitly allow access
-to the nvidia devices like:
-
-docker run ... --gpus all --device /dev/nvidia0 --device \
-    /dev/nvidia-uvm --device /dev/nvidia-uvm-tools --device \
-    /dev/nvidiactl ...
-
-or by using a docker-compose which esposes the devices with:
-
-devices:
-  - /dev/nvidia0:/dev/nvidia0
-  - /dev/nvidiactl:/dev/nvidiactl
-  - /dev/nvidia-modeset:/dev/nvidia-modeset
-  - /dev/nvidia-uvm:/dev/nvidia-uvm
-  - /dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools
+docker run --gpus all nvidia/cuda:11.3.0-runtime-ubuntu20.04 nvidia-smi
 ```
 
-**Others distros**: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker
-
-## Remap user (if needed):
+## Remap user (NOT needed):
 
 Find userid and groupid for your user:
 ```sh
