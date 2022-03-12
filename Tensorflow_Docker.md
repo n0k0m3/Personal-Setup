@@ -44,12 +44,14 @@ Check if GPU is available inside docker
 docker run --gpus all nvidia/cuda:11.3.0-runtime-ubuntu20.04 nvidia-smi
 ```
 
-## Remap user (NOT needed):
+## Remap user:
+
+This will remap **ALL** users in docker to the current host-non-root (sudoer) user.
 
 Find userid and groupid for your user:
 ```sh
 id
-#example output: uid=1000(n0k0m3) gid=1001(n0k0m3) groups=1001(n0k0m3),3(sys),965(libvirt),966(docker),982(rfkill),984(users),992(kvm),993(input),998(wheel),1000(autologin)
+#example output: uid=1000(n0k0m3) gid=1001(n0k0m3) groups=1001(n0k0m3)
 ```
 
 We'll use `username=n0k0m3`, `uid=1000` and `gid=1001` from here (default username and usergroup)
@@ -67,8 +69,8 @@ Update `subuid/gid`:
 # Append sub-id to these files
 sudo touch /etc/subuid
 sudo touch /etc/subgid
-echo "n0k0m3:1000:65536" >> sudo tee -a /etc/subuid
-echo "n0k0m3:1001:65536" >> sudo tee -a /etc/subgid
+echo "n0k0m3:1000:65536" | sudo tee -a /etc/subuid
+echo "n0k0m3:1001:65536" | sudo tee -a /etc/subgid
 ```
 
 Finally restart `docker` daemon:
