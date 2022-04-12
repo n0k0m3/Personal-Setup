@@ -8,9 +8,9 @@ Setting up Arch with this partition Setup with NO SWAP:
 | -------------------- | ----------- | ---------- | ------------- | ----------------- |
 | EFI system partition | `/boot/efi` | FAT32      | 300-550 MB    | Unencrypted       |
 | `/boot` partition    | `/boot/efi` | ext4       | 200-500 MB    | Unencrypted       |
-| `root` partition     | `/`         | btrfs      | Rest of space | Encrypted         |
+| `root` partition     | `/`         | btrfs/LUKS | Rest of space | Encrypted         |
 
-Note: mount EFI with boot flag
+Note: mount EFI with `boot` flag
 
 ## Add swap after installation
 

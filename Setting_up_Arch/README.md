@@ -1,6 +1,7 @@
 # Setting up Arch
 This is setup on EndeavourOS, on barebone Arch should be a little bit different (install `yay` before all of these steps)
 ## [Setup Swap with hibernation](Swap_Setup.md)
+Read this guide BEFORE install EndeavourOS
 ## Install Nextcloud
 ```sh
 yay -S nextcloud-client
