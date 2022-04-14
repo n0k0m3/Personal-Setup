@@ -13,11 +13,13 @@ main() {
     # :: swap :: #
     SWAP_SIZE=`free -m | awk '/^Mem:/ {print $2+4096}'`
 
-    # Create swap subvolume
-    cd /
-    btrfs subvolume create /@swap
-    mkdir /swap
     luksdevice=`sudo blkid -o device | grep luks`
+
+    # Create swap subvolume
+    mount $luksdevice /mnt
+    btrfs subvolume create /mnt/@swap
+    umount /mnt
+    mkdir /swap
     mount -o subvol=@swap $luksdevice /swap
 
     # Create swap file
@@ -42,14 +44,12 @@ main() {
     offset=$((offset_arr[25] / offset_pagesize))
     btrfsonluks=`sudo blkid -o device | grep luks`
 
-    sed -i "s#loglevel=3#resume=$btrfsonluks loglevel=3#" /etc/default/grub
-    sed -i "s/loglevel=3/resume_offset=$offset loglevel=3/" /etc/default/grub
-    sed -ir 's/^\(HOOKS.*filesystems\)/\1 resume/' /etc/mkinitcpio.conf
+    sed -ri "s#^(GRUB_CMDLINE_LINUX_DEFAULT.+)\"#\1 resume=$btrfsonluks resume_offset=$offset\"#" /etc/default/grub
+    sed -ri "s/^(HOOKS.*filesystems)/\1 resume/" /etc/mkinitcpio.conf
 
     # Add swap to fstab
-    echo "$btrfsonluks /swap          btrfs   subvol=@swap,defaults,compress=no 0 0\n" >> /etc/fstab
+    echo "$btrfsonluks /swap          btrfs   subvol=/@swap,defaults,compress=no 0 0" >> /etc/fstab
     echo '/swap/swapfile none swap defaults 0 0' >> /etc/fstab
-
     # :: remake images :: #
     grub-mkconfig -o /boot/grub/grub.cfg
     mkinitcpio -P
