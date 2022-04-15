@@ -1,5 +1,5 @@
 # Setting up Swap with hibernation
-
+[[Return to previous page]](README.md)
 ## Arch setup
 
 Setting up Arch with this partition Setup with NO SWAP:

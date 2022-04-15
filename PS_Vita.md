@@ -1,4 +1,5 @@
 # Guide for hacking PSVita on Linux
+[[Return to home]](../index.md)
 
 Follow instructions from https://guide.13375384.xyz/start or https://vita.hacks.guide/. 
 - Documents for compiling from sources for tools.

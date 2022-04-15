@@ -1,4 +1,6 @@
 # Tips and Tricks
+[[Return to home]](../index.md)
+
 ## `fstab` mount with user permssion
 
 Use KDE/GNOME partition manager to manage mount point and use mount options: `uid=1000,gid=1001,umask=022`  
