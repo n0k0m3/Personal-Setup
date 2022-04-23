@@ -20,13 +20,14 @@ Requires `systemd` hooks with `sd-encrypt`.
 Boot from USB/ISO of Arch/EndeavourOS. We don't need `chroot`. Following script will convert LUKS1 to LUKS2.
 ```sh
 # :: Convert LUKS1 to LUKS2 :: #
+sudo su -
 lukspart=($(sudo blkid | grep crypto_LUKS))
-lukspart=($(sed -r "s/(.*):/\1/" <<< ${lukspart[1]}))
+lukspart=($(sed -r "s/(.*):/\1/" <<< ${lukspart[0]}))
 luksversion=($(sudo cryptsetup luksDump $lukspart | grep Version))
 luksversion=($(echo $luksversion[2]))
 if [[ $luksversion == 1 ]]; then
     echo "Converting LUKS1 to LUKS2"
-    sudo cryptsetup convert --type luks2 $lukspart
+    cryptsetup convert --type luks2 $lukspart
 else
     echo "Partition is LUKS2 already"
 fi
@@ -34,10 +35,11 @@ fi
 
 Reboot to system. Enroll a new secure passphrase if needed.
 ```sh
+sudo su -
 lukspart=($(sudo blkid | grep crypto_LUKS))
-lukspart=($(sed -r "s/(.*):/\1/" <<< ${lukspart[1]}))
-sudo cryptsetup luksAddKey $lukspart # enter existing passphrase then new passphrase with confirmation
-sudo cryptsetup luksKillSlot $lukspart 0 # remove old passphrase, enter new passphrase
+lukspart=($(sed -r "s/(.*):/\1/" <<< ${lukspart[0]}))
+cryptsetup luksAddKey $lukspart # enter existing passphrase then new passphrase with confirmation
+cryptsetup luksKillSlot $lukspart 0 # remove old passphrase, enter new passphrase
 ```
 
 Setup U2F/FIDO2 key unlock. This will use `hmac-secret` extension of FIDO2 protocol. This method is compatible with almost all FIDO2 devices (I'm using Yubico Security Key (Blue Key) as I can just use 1 U2F key to unlock all OpenPGP, smart card, and OTP keys instead of storing them ).

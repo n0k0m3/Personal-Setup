@@ -32,7 +32,7 @@ hooks() {
 
     # :: Kernel parameters for systemd hooks :: #
     local luksuuid=($(blkid | grep crypto_LUKS))
-    local luksuuid=($(sed -r "s/UUID=\"(.*)\"/\1/" <<< ${luksuuid[2]}))
+    local luksuuid=($(sed -r "s/UUID=\"(.*)\"/\1/" <<< ${luksuuid[1]}))
     # luksdevice=($(echo luks-$luksuuid))
     # lukspart=($(echo /dev/mapper/$luksdevice))
     sed -ri "s/cryptdevice.+ (root)/rd.luks.uuid=$luksuuid \1/" /etc/default/grub
@@ -53,7 +53,7 @@ plymouth() {
 
     # :: plymouth smooth transition :: #
     local displaymanager=($(systemctl status display-manager))
-    local plymouthdm=($(sed -r "s/(.*)(\.service)/\1-plymouth\2/" <<< ${displaymanager[2]}))
+    local plymouthdm=($(sed -r "s/(.*)(\.service)/\1-plymouth\2/" <<< ${displaymanager[1]}))
     systemctl disable $displaymanager
     systemctl enable $plymouthdm
 }

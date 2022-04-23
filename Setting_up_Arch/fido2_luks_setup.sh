@@ -12,12 +12,12 @@ set -xe
 fido2() {
     # :: FIDO2 systemd-cryptenroll :: #
     local lukspart=($(sudo blkid | grep crypto_LUKS))
-    local lukspart=($(sed -r "s/(.*):/\1/" <<< ${lukspart[1]}))
+    local lukspart=($(sed -r "s/(.*):/\1/" <<< ${lukspart[0]}))
     systemd-cryptenroll --fido2-device=auto $lukspart
 
     # :: FIDO2 decryption kernel parameters :: #
     local luksuuid=($(blkid | grep crypto_LUKS))
-    local luksuuid=($(sed -r "s/UUID=\"(.*)\"/\1/" <<< ${luksuuid[2]}))
+    local luksuuid=($(sed -r "s/UUID=\"(.*)\"/\1/" <<< ${luksuuid[1]}))
     # setup FIDO2 device to unlock luks2 partition, timeout is set to 10 seconds and then secure passphrase is asked
     sed -ri "s/^(GRUB_CMDLINE_LINUX=\")(.*)/\1rd.luks.option=$luksuuid=fido2-device=auto,token-timeout=10\2/" /etc/default/grub
 
