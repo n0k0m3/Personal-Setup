@@ -33,7 +33,6 @@ hooks() {
     # :: Kernel parameters for systemd hooks :: #
     luksuuid=($(blkid | grep crypto_LUKS))
     luksuuid=($(sed -r "s/UUID=\"(.*)\"/\1/" <<< ${luksuuid[1]}))
-    echo $luksuuid
     # luksdevice=($(echo luks-$luksuuid))
     # lukspart=($(echo /dev/mapper/$luksdevice))
     sed -ri "s/cryptdevice.+ (root)/rd.luks.uuid=$luksuuid \1/" /etc/default/grub
