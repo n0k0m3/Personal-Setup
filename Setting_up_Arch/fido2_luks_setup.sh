@@ -28,6 +28,7 @@ fido2() {
 post_install() {
     # :: Remake images and grub :: #
     grub-mkconfig -o /boot/grub/grub.cfg
+    mkinitcpio -P
 }
 
 fido2 "$@"
