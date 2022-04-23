@@ -23,8 +23,8 @@ Boot from USB/ISO of Arch/EndeavourOS. We don't need `chroot`. Following script 
 sudo su -
 lukspart=($(sudo blkid | grep crypto_LUKS))
 lukspart=($(sed -r "s/(.*):/\1/" <<< ${lukspart[0]}))
-luksversion=($(sudo cryptsetup luksDump $lukspart | grep Version))
-luksversion=($(echo $luksversion[2]))
+luksversion=$(sudo cryptsetup luksDump $lukspart | grep Version)
+luksversion=($(echo ${luksversion[-1]}))
 if [[ $luksversion == 1 ]]; then
     echo "Converting LUKS1 to LUKS2"
     cryptsetup convert --type luks2 $lukspart
