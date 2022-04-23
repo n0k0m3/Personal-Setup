@@ -18,11 +18,11 @@ fido2() {
     # :: FIDO2 decryption kernel parameters :: #
     local luksuuid=($(blkid | grep crypto_LUKS))
     local luksuuid=($(sed -r "s/UUID=\"(.*)\"/\1/" <<< ${luksuuid[1]}))
-    # setup FIDO2 device to unlock luks2 partition, timeout is set to 10 seconds and then secure passphrase is asked
-    sed -ri "s/^(GRUB_CMDLINE_LINUX=\")(.*)/\1rd.luks.option=$luksuuid=fido2-device=auto,token-timeout=10\2/" /etc/default/grub
 
-    # :: Disable crypttab entries to speed up boot :: #
+    # setup FIDO2 device to unlock luks2 partition, timeout is set to 10 seconds and then secure passphrase is asked
     sed -ri "s/^(luks-.*)/#\1/" /etc/crypttab
+    echo "luks-$luksuuid UUID=$luksuuid - fido2-device=auto,token-timeout=10" >> /etc/crypttab
+    ln /etc/crypttab /etc/crypttab.initramfs # add crypttab to initramfs
 }
 
 post_install() {
