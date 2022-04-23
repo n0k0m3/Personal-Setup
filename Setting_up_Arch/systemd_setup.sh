@@ -31,8 +31,8 @@ hooks() {
     sed -ri "s/^(HOOKS=\"base).*(autodetect.+keyboard).+(encrypt) (.+)/\1 systemd \2 sd-vconsole sd-encrypt \4/" /etc/mkinitcpio.conf
 
     # :: Kernel parameters for systemd hooks :: #
-    luksuuid=($(blkid | grep crypto_LUKS))
-    luksuuid=($(sed -r "s/UUID=\"(.*)\"/\1/" <<< ${luksuuid[1]}))
+    local luksuuid=($(blkid | grep crypto_LUKS))
+    local luksuuid=($(sed -r "s/UUID=\"(.*)\"/\1/" <<< ${luksuuid[1]}))
     # luksdevice=($(echo luks-$luksuuid))
     # lukspart=($(echo /dev/mapper/$luksdevice))
     sed -ri "s/cryptdevice.+ (root)/rd.luks.uuid=$luksuuid \1/" /etc/default/grub
