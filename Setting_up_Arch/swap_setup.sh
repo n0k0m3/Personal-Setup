@@ -15,14 +15,14 @@ main() {
 
     luksdevice=`sudo blkid -o device | grep luks`
 
-    # Create swap subvolume
+    # :: Create swap subvolume :: #
     mount $luksdevice /mnt
     btrfs subvolume create /mnt/@swap
     umount /mnt
     mkdir /swap
     mount -o subvol=@swap $luksdevice /swap
 
-    # Create swap file
+    # :: Create swap file :: #
     truncate -s 0 /swap/swapfile
     chattr +C /swap/swapfile
 
@@ -47,7 +47,7 @@ main() {
     sed -ri "s#^(GRUB_CMDLINE_LINUX_DEFAULT.+)\"#\1 resume=$btrfsonluks resume_offset=$offset\"#" /etc/default/grub
     sed -ri "s/^(HOOKS.*filesystems)/\1 resume/" /etc/mkinitcpio.conf
 
-    # Add swap to fstab
+    # :: Add swap to fstab :: #
     echo "$btrfsonluks /swap          btrfs   subvol=/@swap,defaults,compress=no 0 0" >> /etc/fstab
     echo '/swap/swapfile none swap defaults 0 0' >> /etc/fstab
     # :: remake images :: #

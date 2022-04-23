@@ -1,16 +1,5 @@
 # Setting up Swap with hibernation
 [[Return to previous page]](README.md)
-## Arch setup
-
-Setting up Arch with this partition Setup with NO SWAP:
-
-| Partition            | Mount Point | Filesystem | Size          | Encryption Status |
-| -------------------- | ----------- | ---------- | ------------- | ----------------- |
-| EFI system partition | `/boot/efi` | FAT32      | 300-550 MB    | Unencrypted       |
-| `/boot` partition    | `/boot/efi` | ext4       | 200-500 MB    | Unencrypted       |
-| `root` partition     | `/`         | btrfs/LUKS | Rest of space | Encrypted         |
-
-Note: mount EFI with `boot` flag
 
 ## Add swap after installation
 
