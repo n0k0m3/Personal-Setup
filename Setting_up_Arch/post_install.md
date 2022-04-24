@@ -2,7 +2,7 @@
 layout: default
 title: Post-Installation Setup
 parent: Arch Linux Setup
-grand_parent: Other Projects
+grand_parent: Personal Projects
 nav_order: 3
 ---
 

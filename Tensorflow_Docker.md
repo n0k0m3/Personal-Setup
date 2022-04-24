@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Tensorflow with GPU support in Docker
-parent: Other Projects
+parent: Personal Projects
 nav_order: 2    
 ---
 

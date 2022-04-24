@@ -2,7 +2,7 @@
 layout: default
 title: systemd hooks with FIDO2 unlock
 parent: Arch Linux Setup
-grand_parent: Other Projects
+grand_parent: Personal Projects
 nav_order: 2
 ---
 

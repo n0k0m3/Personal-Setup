@@ -1,7 +1,7 @@
 ---
 layout: default
 title: VFIO Single GPU Passthrough
-parent: Other Projects
+parent: Personal Projects
 nav_order: 4
 ---
 

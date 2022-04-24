@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Arch Linux Setup
-parent: Other Projects
+parent: Personal Projects
 has_children: true
 nav_order: 1
 ---

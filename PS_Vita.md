@@ -1,7 +1,7 @@
 ---
 layout: default
 title: PSVita Piracy
-parent: Other Projects
+parent: Personal Projects
 nav_order: 5
 ---
 
