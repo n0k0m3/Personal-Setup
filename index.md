@@ -1,3 +1,10 @@
+---
+layout: default
+title: Other Projects
+nav_order: 4
+has_children: true
+---
+
 # Other Projects
 [[Return to top level]](https://n0k0m3.github.io/)
 

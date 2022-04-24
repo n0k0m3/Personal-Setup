@@ -1,4 +1,14 @@
+---
+layout: default
+title: systemd hooks with FIDO2 unlock
+parent: Arch Linux Setup
+grand_parent: Other Projects
+nav_order: 2
+---
+
 # Setting up `systemd` hooks
+
+By default Arch-based distros uses busybox init, which doesn’t support some features comfort from systemd. This guide will help you to setup systemd hooks, switch encryption to LUKS2 for systemd-cryptenroll, use U2F/FIDO2 key to unlock at boot, and Plymouth for boot splash screen.
 
 ## `systemd` hooks and Plymouth boot splash screen
 
@@ -31,9 +41,7 @@ if [[ $luksversion == 1 ]]; then
 else
     echo "Partition is LUKS2 already"
 fi
-```
-
-Reboot to system. Enroll a new secure passphrase if needed.
+```By default Arch-based distros uses busybox init, which doesn’t support some features comfort from systemd. This guide will help you to setup systemd hooks, switch encryption to LUKS2 for systemd-cryptenroll, use U2F/FIDO2 key to unlock at boot, and Plymouth for boot splash screen.new secure passphrase if needed.
 ```sh
 sudo su -
 lukspart=($(sudo blkid | grep crypto_LUKS))
@@ -42,7 +50,7 @@ cryptsetup luksAddKey $lukspart # enter existing passphrase then new passphrase 
 cryptsetup luksKillSlot $lukspart 0 # remove old passphrase, enter new passphrase
 ```
 
-Setup U2F/FIDO2 key unlock. This will use `hmac-secret` extension of FIDO2 protocol. This method is compatible with almost all FIDO2 devices (I'm using Yubico Security Key (Blue Key) as I can just use 1 U2F key to unlock all OpenPGP, smart card, and OTP keys instead of storing them ).
+Setup U2F/FIDO2 key unlock. This will use `hmac-secret` extension of FIDO2 protocol. This method is compatible with almost all FIDO2 devices (I'm using Yubico Security Key (Blue Key) as I can just use a single U2F key to unlock all OpenPGP, smart card, and OTP keys instead of storing them).
 
 ```sh
 # :: Install libfido2 :: #

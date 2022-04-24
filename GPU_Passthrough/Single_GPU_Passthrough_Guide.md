@@ -1,5 +1,11 @@
+---
+layout: default
+title: VFIO Single GPU Passthrough
+parent: Other Projects
+nav_order: 4
+---
+
 # VFIO Single GPU Passthrough Guide on Linux
-[[Return to home]](../index.md)
 
 ##### References & See Also
 
@@ -10,9 +16,7 @@
 
 ##### Table of content
 
-- [VFIO Single GPU Passthrough Guide on Linux](#vfio-single-gpu-passthrough-guide-on-linux)
-        - [References & See Also](#references--see-also)
-        - [Table of content](#table-of-content)
+- [VFIO Single GPU Passthrough Guide on Linux](#vfio-single-gpu-passthrough-guide-on-linux) - [References & See Also](#references--see-also) - [Table of content](#table-of-content)
   - [1. Notes](#1-notes)
   - [2. Host Machine Settings](#2-host-machine-settings)
     - [2.1 Enable & Verify IOMMU](#21-enable--verify-iommu)
@@ -33,7 +37,7 @@
 
 ## 1. Notes
 
-[Return to top &#x21ba;](#table-of-content)
+[Return to ToC &#x21ba;](#table-of-content)
 
 Most of these commands will be run under `root`.
 
@@ -47,41 +51,43 @@ sudo su -
 
 #### 2.1.1 Enabling IOMMU in BIOS
 
-[Return to top &#x21ba;](#table-of-content)
+[Return to ToC &#x21ba;](#table-of-content)
 
 Varies and depends on motherboard. Follow this guide: [Arch Wiki](https://wiki.archlinux.org/index.php/PCI_passthrough_via_OVMF#Enabling_IOMMU)
 
 #### 2.1.2 Add kernel for IOMMU in GRUB
 
-[Return to top &#x21ba;](#table-of-content)
+[Return to ToC &#x21ba;](#table-of-content)
 
-1. Add these flags to the end of `GRUB_CMDLINE_LINUX_DEFAULT` variable
+Add these flags to the end of `GRUB_CMDLINE_LINUX_DEFAULT` variable
 
-| `nano /etc/default/grub`                                                           |
+| `nano /etc/default/grub`                                                         |
 | -------------------------------------------------------------------------------- |
 | For Intel CPU                                                                    |
 | `GRUB_CMDLINE_LINUX_DEFAULT="... intel_iommu=on iommu=pt rd.driver.pre=vfio-pc"` |
 | For AMD CPU                                                                      |
 | `GRUB_CMDLINE_LINUX_DEFAULT="... amd_iommu=on iommu=pt rd.driver.pre=vfio-pc"`   |
 
-2. Generate grub.cfg
+Generate grub.cfg
 
 ```sh
 grub-mkconfig -o /boot/grub/grub.cfg
 ```
 
-3. Reboot your system for the changes to take effect.
+Reboot your system for the changes to take effect.
 
 #### 2.1.3 Checking IOMMU
 
-[Return to top &#x21ba;](#table-of-content)
+[Return to ToC &#x21ba;](#table-of-content)
 
 By this point IOMMU should be enabled. Check if there's a return
 
 ```sh
 sudo dmesg | grep 'IOMMU'
 ```
+
 Example return
+
 ```
 [    0.731687] pci 0000:00:00.2: AMD-Vi: IOMMU performance counters supported
 [    0.732465] pci 0000:00:00.2: AMD-Vi: Found IOMMU cap 0x40
@@ -94,11 +100,14 @@ Example return
 IOMMU is the SMALLEST group that you can passthrough to VM, means that ALL devices in IOMMU must be **passthrough** to the VM
 
 Run this command to check IOMMU grouping:
+
 ```sh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/n0k0m3/Personal-Setup/main/GPU_Passthrough/iommu.sh)" >> iommu.txt
 ## Delete ">> iommu.txt" to see output in stdout
 ```
+
 Example output `iommu.txt`
+
 ```
 ...
 IOMMU group 23
@@ -106,6 +115,7 @@ IOMMU group 23
 [NORES]	09:00.1 Audio device [0403]: NVIDIA Corporation Device [10de:228b] (rev a1)
 ...
 ```
+
 Here our NVIDIA GPU is in group 23 and well isolated. Note the `[NORES]` flag means that the device won't power-cycle properly after VM shutdown ([Source](https://wiki.archlinux.org/title/PCI_passthrough_via_OVMF#Passing_through_a_device_that_does_not_support_resetting)). For now remember device IDs `09:00.0`, `09:00.1` to passthrough
 
 If your PCIe devices are not well-isolated, ~~check [ACS Override Kernel](https://queuecumber.gitlab.io/linux-acs-override/) and [ACS Patching Guide](https://github.com/bryansteiner/gpu-passthrough-tutorial#----acs-override-patch-optional). However, I wouldn't recommend this as it is really insecure ([source](https://www.reddit.com/r/VFIO/comments/bvif8d/official_reason_why_acs_override_patch_is_not_in/)). Better sell your motherboard and get one with better IOMMU grouping.~~  
@@ -113,7 +123,7 @@ Install `linux-zen` (available as binary) or any `linux-xanmod` (build from sour
 
 ### 2.2 Installing Packages
 
-[Return to top &#x21ba;](#table-of-content)
+[Return to ToC &#x21ba;](#table-of-content)
 
 **Arch Linux**
 
@@ -141,7 +151,7 @@ apt install qemu-kvm qemu-utils libvirt-daemon-system libvirt-clients bridge-uti
 
 ### 2.3 Enable required services
 
-[Return to top &#x21ba;](#table-of-content)
+[Return to ToC &#x21ba;](#table-of-content)
 
 ```sh
 systemctl enable --now libvirtd
@@ -166,7 +176,7 @@ Following is the guide to create a VM similar to my setup.
 
 ### 3.1 Setting up VM and install Guest OS (Windows 10)
 
-[Return to top &#x21ba;](#table-of-content)
+[Return to ToC &#x21ba;](#table-of-content)
 
 **_NOTE: You should replace win10 with your VM's name where applicable_** \
 You should add your user to **_libvirt_** group to be able to run VM without root. And, **_input_** and **_kvm_** group for passing input devices.
@@ -187,7 +197,7 @@ usermod -aG kvm,input,libvirt $USER
 
 ### 3.2 Attaching PCI devices
 
-[Return to top &#x21ba;](#table-of-content)
+[Return to ToC &#x21ba;](#table-of-content)
 
 **Keep `Display Spice` and `Video QXL` for debugging**  
 Remove `Channel Spice`, `Sound ich*` and other unnecessary devices.  
@@ -195,7 +205,7 @@ Now, click on **_Add Hardware_**, select **_PCI Host Device_** and add the PCI H
 
 #### 3.2.1 Video card driver virtualisation detection
 
-[Return to top &#x21ba;](#table-of-content)
+[Return to ToC &#x21ba;](#table-of-content)
 
 Spoof Hyper-V Vendor ID for GPU guest drivers (AMD).
 
@@ -227,25 +237,27 @@ NVIDIA guest drivers prior to version 465 require hiding the KVM CPU leaf (avoid
 ...
 ```
 
-
 ### 3.3 Keyboard/Mouse/Audio Passthrough
 
-[Return to top &#x21ba;](#table-of-content)
+[Return to ToC &#x21ba;](#table-of-content)
 
 I won't be using passthrough as the latency and complicated setup is not worth it. Follow [USB Controller Passthrough](#usb-controller-passthrough)
 
 ### 3.4 USB Controller Passthrough
 
-[Return to top &#x21ba;](#table-of-content)
+[Return to ToC &#x21ba;](#table-of-content)
 
 Passing through Audio through PulseAudio is laggy, and passing Keyboard/Mouse/Audio is complicated. Also, you won't be able to use the main machine in Single GPU Passthrough setup anyway.
 
 Run this script to print which USB devices on which PCIe USB controller:
+
 ```sh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/n0k0m3/Personal-Setup/main/GPU_Passthrough/usb_iommu.sh)" >> usb_iommu.txt
 ## Delete ">> usb_iommu.txt" to see output in stdout
 ```
+
 Example output
+
 ```
 ...
 Bus 5 --> 0000:0b:00.3 (IOMMU group 27)
@@ -261,13 +273,16 @@ Bus 006 Device 002: ID 1058:25fb Western Digital Technologies, Inc. easystore De
 Bus 006 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
 ...
 ```
+
 Note here that we don't care about the bus but rather the PCIe hardware ID and IOMMU group. Let's go back and check the grouping
+
 ```
 ...
 IOMMU group 27
 	0b:00.3 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] Matisse USB 3.0 Host Controller [1022:149c]
 ...
 ```
+
 In my setup the USB controller is isolated with the rest, which is perfect. Now I just need to pass this whole device (`0b:00.3`) to VM
 
 To find which USB port belongs to which controller/IOMMU group, replug your mouse/keyboard/random USB to every port on PC and rerun the script. Usually adjacent USB ports are from same controller.
@@ -276,6 +291,7 @@ To find which USB port belongs to which controller/IOMMU group, replug your mous
   <summary><b>Some outlier (click to reveal)</b></summary>
 
 In my current setup Group 18 is also contains USB controller
+
 ```
 ...
 IOMMU group 18
@@ -285,7 +301,9 @@ IOMMU group 18
 	06:00.3 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] Matisse USB 3.0 Host Controller [1022:149c]
 ...
 ```
+
 Corresponding USB bus
+
 ```
 ...
 Bus 1 --> 0000:06:00.1 (IOMMU group 18)
@@ -311,17 +329,20 @@ Bus 004 Device 002: ID 0424:5537 Microchip Technology, Inc. (formerly SMSC) USB5
 Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
 ...
 ```
+
 Due to [reset problem](https://wiki.archlinux.org/title/PCI_passthrough_via_OVMF#Passing_through_a_device_that_does_not_support_resetting), we need to figure out devices that can be power-cycled using linux. In group 18 one of our USB controller cannot be reset (`06:00.1`). Also LED controller, Wifi, etc. is bundled in this group, along with PCIe bridge, which is terrible to deal with and isolate. So we will not use this controller/controller group
+
 </details>
 
 ## 4. Libvirt Hooks
 
-[Return to top &#x21ba;](#table-of-content)
+[Return to ToC &#x21ba;](#table-of-content)
 
 Libvirt hooks automate the process of running specific tasks during VM state change. \
 More info at: [PassthroughPost](https://passthroughpo.st/simple-per-vm-libvirt-hooks-with-the-vfio-tools-hook-helper/)
 
 Copy `hooks` folder to `/etc/libvirt/`
+
 ```sh
 cp -R hooks /etc/libvirt/
 ```
@@ -481,7 +502,7 @@ systemctl start display-manager
 
 ## 5. vBIOS Patching (No need for my setup)
 
-[Return to top &#x21ba;](#table-of-content)
+[Return to ToC &#x21ba;](#table-of-content)
 
 **_NOTE: vBIOS patching is not patching directly into the hardware. You only patch the dumped ROM file._** \
 While most of the GPU can be passed with stock vBIOS, some GPU requires vBIOS patching depending on your host distro. \
@@ -502,15 +523,15 @@ For other GPU, I have no idea.
 
 To use patched vBIOS, edit VM's configuration to include patched vBIOS inside **_hostdev_** block of VGA
 
-  <table>
-  <tr>
-  <th>
-  virsh edit win10
-  </th>
-  </tr>
+<table>
+<tr>
+<th>
+virsh edit win10
+</th>
+</tr>
 
-  <tr>
-  <td>
+<tr>
+<td>
 
 ```xml
 ...
@@ -524,6 +545,6 @@ To use patched vBIOS, edit VM's configuration to include patched vBIOS inside **
 ...
 ```
 
-  </td>
-  </tr>
-  </table>
+</td>
+</tr>
+</table>

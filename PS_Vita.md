@@ -1,7 +1,14 @@
-# Guide for hacking PSVita on Linux
-[[Return to home]](../index.md)
+---
+layout: default
+title: PSVita Piracy
+parent: Other Projects
+nav_order: 5
+---
 
-Follow instructions from https://guide.13375384.xyz/start or https://vita.hacks.guide/. 
+# Guide for hacking PSVita on Linux
+
+Follow instructions from https://guide.13375384.xyz/start or https://vita.hacks.guide/.
+
 - Documents for compiling from sources for tools.
 - Guide to mount TexFAT
 
@@ -10,20 +17,25 @@ Follow instructions from https://guide.13375384.xyz/start or https://vita.hacks.
 DON'T MANUALLY SETTING YAMT, JUST USE YAMT SETUP USING VITADEPLOY ([guide](https://guide.13375384.xyz/start))
 
 ## FinalHE
+
 Check prerequisites (https://github.com/soarqin/finalhe)
+
 ```sh
 git clone https://github.com/soarqin/finalhe
 cd finalhe
 qmake && make
 ```
+
 Build artifacts in `src/FinalHE`. Copy `VitaDeploy` zip in the same folder as `FinalHE` binary
 
 ## YAMT TexFAT mount
+
 Install `exfat-nofuse`. [[Arch AUR]](https://aur.archlinux.org/packages/exfat-utils-nofuse/) [[Other distros build from source]](https://github.com/relan/exfat)
 
 **Note:** Use `rsync` to copy files from host to sd2vita instead of Nautilus or other GUI File Manager.
 
 ### Build `exfat-nofuse` from source
+
 ```sh
 git clone https://github.com/relan/exfat
 cd exfat
@@ -38,14 +50,18 @@ make CCFLAGS="${CFLAGS} ${CPPFLAGS} -std=c99" LINKFLAGS="${LDFLAGS}"
 # Install
 sudo make install
 ```
+
 ### After installing `exfat-nofuse`:
+
 ```sh
 sudo modprobe exfat
 ```
 
 ## xdelta3
-`xdelta3` is a binary diff tool used by some modders (for example,  MrComputerRevo on Grisaia Triology + Spin off patch).  
+
+`xdelta3` is a binary diff tool used by some modders (for example, MrComputerRevo on Grisaia Triology + Spin off patch).  
 Binary of this library is only available for windows. Build steps are documented below.
+
 ```sh
 git clone https://github.com/jmacd/xdelta
 cd xdelta/xdelta3
@@ -65,7 +81,9 @@ automake
 ./configure --disable-dependency-tracking --prefix=/usr --with-liblzma
 make
 ```
+
 Build artifacts in `xdelta/xdelta3/xdelta3`
 
 ## NPS Browser and pkg2zip
+
 Use `NPS Browser` and `pkg2zip` with `wine` + `wine-mono`. You don't really need `wine-gecko` for patch checking but if you REALLY want you can just install it.

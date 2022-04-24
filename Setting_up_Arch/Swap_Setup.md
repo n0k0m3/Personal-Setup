@@ -1,5 +1,14 @@
+---
+layout: default
+title: Swap with hibernation
+parent: Arch Linux Setup
+grand_parent: Other Projects
+nav_order: 1
+---
+
 # Setting up Swap with hibernation
-[[Return to previous page]](README.md)
+
+This is setup on EndeavourOS/Manjaro, on barebone Arch should be a little bit different (install yay before all of these steps)
 
 ## Add swap after installation
 

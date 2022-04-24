@@ -1,5 +1,11 @@
+---
+layout: default
+title: Tensorflow with GPU support in Docker
+parent: Other Projects
+nav_order: 2    
+---
+
 # Running Tensorflow with GPU support (NVIDIA) in docker
-[[Return to home]](../index.md)
 
 Following guide was tested on EndeavourOS and Manjaro (Arch-based) Linux distro.
 
