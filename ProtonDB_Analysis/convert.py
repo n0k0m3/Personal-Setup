@@ -1,4 +1,8 @@
-front_matter_str = """---
+import subprocess
+import shutil
+import os
+
+FRONT_MATTER_STR = """---
 layout: default
 title: ProtonDB Analysis
 parent: Data Analysis
@@ -6,9 +10,7 @@ grand_parent: Projects
 nav_order: 1
 ---"""
 
-import subprocess
-import shutil
-import os
+IPYNB_FILE = "analysis.ipynb"
 
 # function that will prepend given string to given filename
 def prepend_string(filename, string):
@@ -28,10 +30,9 @@ def move_files(filename):
     if not os.path.exists("iframe_figures"):
         return
     filename = os.path.splitext(filename)[0]
-    os.makedirs(filename + "/" + "iframe_figures", exist_ok=True)
-    shutil.copytree(
-        "iframe_figures", filename + "/" + "iframe_figures", dirs_exist_ok=True
-    )
+    jekyll_assets_path = os.path.join(filename, "iframe_figures")
+    os.makedirs(jekyll_assets_path, exist_ok=True)
+    shutil.copytree("iframe_figures", jekyll_assets_path, dirs_exist_ok=True)
     shutil.rmtree("iframe_figures")
 
 
@@ -67,6 +68,6 @@ def conv_nb_jekyll(filename, front_matter):
     return md_file
 
 
-jekyll_html_post = conv_nb_jekyll(
-    filename="analysis.ipynb", front_matter=front_matter_str
-)
+if __name__ == "__main__":
+    # call function to convert ipynb to md
+    md_file = conv_nb_jekyll(filename=IPYNB_FILE, front_matter=FRONT_MATTER_STR)
