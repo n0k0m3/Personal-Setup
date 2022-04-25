@@ -7,16 +7,10 @@ nav_order: 4
 
 # VFIO Single GPU Passthrough Guide on Linux
 
-##### References & See Also
+## Table of content
 
-[VFIO Single GPU Passthrough Configuration by Karuri](https://gitlab.com/Karuri/vfio)  
-[Single GPU Passthrough by joeknock90](https://github.com/joeknock90/Single-GPU-Passthrough)  
-[Complete Single GPU Passthrough by QaidVoid](https://github.com/QaidVoid/Complete-Single-GPU-Passthrough) (format for this guide)  
-[Arch Wiki PCI passthrough via OVMF](https://wiki.archlinux.org/index.php/PCI_passthrough_via_OVMF)
-
-##### Table of content
-
-- [VFIO Single GPU Passthrough Guide on Linux](#vfio-single-gpu-passthrough-guide-on-linux) - [References & See Also](#references--see-also) - [Table of content](#table-of-content)
+- [VFIO Single GPU Passthrough Guide on Linux](#vfio-single-gpu-passthrough-guide-on-linux)
+  - [Table of content](#table-of-content)
   - [1. Notes](#1-notes)
   - [2. Host Machine Settings](#2-host-machine-settings)
     - [2.1 Enable & Verify IOMMU](#21-enable--verify-iommu)
@@ -34,6 +28,8 @@ nav_order: 4
     - [3.4 USB Controller Passthrough](#34-usb-controller-passthrough)
   - [4. Libvirt Hooks](#4-libvirt-hooks)
   - [5. vBIOS Patching (No need for my setup)](#5-vbios-patching-no-need-for-my-setup)
+- [Script Source code](#script-source-code)
+- [References & See Also](#references--see-also)
 
 ## 1. Notes
 
@@ -209,6 +205,10 @@ Now, click on **_Add Hardware_**, select **_PCI Host Device_** and add the PCI H
 
 Spoof Hyper-V Vendor ID for GPU guest drivers (AMD).
 
+<div class="code-example" markdown="1">
+`virsh edit win10`
+</div>
+
 ```xml
 ...
 <features>
@@ -224,6 +224,10 @@ Spoof Hyper-V Vendor ID for GPU guest drivers (AMD).
 ```
 
 NVIDIA guest drivers prior to version 465 require hiding the KVM CPU leaf (avoid error 43):
+
+<div class="code-example" markdown="1">
+`virsh edit win10`
+</div>
 
 ```xml
 ...
@@ -523,16 +527,9 @@ For other GPU, I have no idea.
 
 To use patched vBIOS, edit VM's configuration to include patched vBIOS inside **_hostdev_** block of VGA
 
-<table>
-<tr>
-<th>
-virsh edit win10
-</th>
-</tr>
-
-<tr>
-<td>
-
+<div class="code-example" markdown="1">
+`virsh edit win10`
+</div>
 ```xml
 ...
 <hostdev mode='subsystem' type='pci' managed='yes'>
@@ -545,6 +542,56 @@ virsh edit win10
 ...
 ```
 
-</td>
-</tr>
-</table>
+# Script Source code
+
+<div class="code-example" markdown="1">
+
+[Download iommu.sh](iommu.sh){: .btn }
+
+</div>
+{% capture iommu %}
+{% highlight shell linenos %}
+#!/bin/bash
+shopt -s nullglob
+
+for iommu_group in $(find /sys/kernel/iommu_groups/ -maxdepth 1 -mindepth 1 -type d);do
+    echo "IOMMU group $(basename "$iommu_group")";
+    for device in $(\ls -1 "$iommu_group"/devices/); do
+        if ! [[ -e "$iommu_group"/devices/"$device"/reset ]]; then
+            echo -n "[NORES]";
+        fi;
+        echo -n $'\t';lspci -nns "$device";
+    done;
+    echo;
+done;
+{% endhighlight %}
+{% endcapture %}
+{% include fix_linenos.html code=iommu %}
+
+<div class="code-example" markdown="1">
+
+[Download usb_iommu.sh](usb_iommu.sh){: .btn }
+
+</div>
+{% capture usb_iommu %}
+{% highlight shell linenos %}
+#!/bin/bash
+shopt -s nullglob
+
+for usb_ctrl in /sys/bus/pci/devices/*/usb*; do
+    pci_path=${usb_ctrl%/*};
+    iommu_group=$(readlink $pci_path/iommu_group);
+    echo "Bus $(cat $usb_ctrl/busnum) --> ${pci_path##*/} (IOMMU group ${iommu_group##*/})";
+    lsusb -s ${usb_ctrl#*/usb}:;
+    echo;
+done
+{% endhighlight %}
+{% endcapture %}
+{% include fix_linenos.html code=usb_iommu %}
+
+# References & See Also
+
+[VFIO Single GPU Passthrough Configuration by Karuri](https://gitlab.com/Karuri/vfio)  
+[Single GPU Passthrough by joeknock90](https://github.com/joeknock90/Single-GPU-Passthrough)  
+[Complete Single GPU Passthrough by QaidVoid](https://github.com/QaidVoid/Complete-Single-GPU-Passthrough) (format for this guide)  
+[Arch Wiki PCI passthrough via OVMF](https://wiki.archlinux.org/index.php/PCI_passthrough_via_OVMF)
