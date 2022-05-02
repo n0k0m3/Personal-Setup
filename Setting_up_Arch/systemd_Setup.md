@@ -35,12 +35,14 @@ sudo su -
 lukspart=($(sudo blkid | grep crypto_LUKS))
 lukspart=($(sed -r "s/(.*):/\1/" <<< ${lukspart[0]}))
 luksversion=$(sudo cryptsetup luksDump $lukspart | grep Version)
-luksversion=($(echo ${luksversion[-1]}))
-if [[ $luksversion == 1 ]]; then
+if grep -q "1" <<< "$luksversion"; then
     echo "Converting LUKS1 to LUKS2"
     cryptsetup convert --type luks2 $lukspart
-else
+elif grep -q "2" <<< "$luksversion"; then
     echo "Partition is LUKS2 already"
+else
+    echo "Unknown LUKS version"
+    exit 1
 fi
 ```
 
@@ -130,7 +132,7 @@ plymouth() {
     # :: plymouth smooth transition :: #
     local displaymanager=($(systemctl status display-manager))
     local plymouthdm=($(sed -r "s/(.*)(\.service)/\1-plymouth\2/" <<< ${displaymanager[1]}))
-    systemctl disable $displaymanager
+    systemctl disable ${displaymanager[1]}
     systemctl enable $plymouthdm
 }
 
