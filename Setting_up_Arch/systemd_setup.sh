@@ -54,7 +54,7 @@ plymouth() {
     # :: plymouth smooth transition :: #
     local displaymanager=($(systemctl status display-manager))
     local plymouthdm=($(sed -r "s/(.*)(\.service)/\1-plymouth\2/" <<< ${displaymanager[1]}))
-    systemctl disable $displaymanager
+    systemctl disable ${displaymanager[1]}
     systemctl enable $plymouthdm
 }
 
