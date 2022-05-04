@@ -19,7 +19,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/n0k0m3/Personal-Setup/main
 ## Install Nextcloud
 
 ```sh
-yay -S nextcloud-client
+sudo pacman -S nextcloud-client
 ```
 
 Sync `.dotfiles` with Nextcloud + `flameshot` shortcut

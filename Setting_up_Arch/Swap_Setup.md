@@ -8,7 +8,7 @@ nav_order: 1
 
 # Setting up Swap with hibernation
 
-This is setup on EndeavourOS/Manjaro, on barebone Arch should be a little bit different (install yay before all of these steps)
+This is setup on EndeavourOS/Manjaro, on barebone Arch should be a little bit different (install `yay` before all of these steps)
 
 ## Add swap after installation
 

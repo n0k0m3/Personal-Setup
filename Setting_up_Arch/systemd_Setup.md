@@ -60,7 +60,7 @@ Setup U2F/FIDO2 key unlock.
 
 ```sh
 # :: Install libfido2 :: #
-yay -S --noconfirm --needed libfido2
+sudo pacman -S --noconfirm --needed libfido2
 # :: Configure luks2 decryption with FIDO2 using systemd-cryptenroll :: #
 sudo sh -c "$(curl -fsSL https://raw.githubusercontent.com/n0k0m3/Personal-Setup/main/Setting_up_Arch/fido2_luks_setup.sh)"
 ```
