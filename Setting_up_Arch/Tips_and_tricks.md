@@ -24,24 +24,3 @@ Use KDE/GNOME partition manager to manage mount point, this will use the default
 ```
 UUID=<disk_UUID>   <mount_point>    ntfs3       discard,noatime                     0 0
 ```
-
-# Troubleshooting amd Fixing
-
-## Fixing OBS Studio flickering with Intel Graphics
-
-<div class="code-example" markdown="1">
-
-```sh
-sudo nano /etc/X11/xorg.conf.d/20-intel.conf
-```
-
-</div>
-{% capture fix_intel %}
-{% highlight shell linenos %}
-Section "Device"
-    Identifier "Intel Graphics"
-    Driver "modesetting"
-EndSection
-{% endhighlight %}
-{% endcapture %}
-{% include fix_linenos.html code=fix_intel %}
