@@ -10,5 +10,5 @@ with open(sys.argv[1],"r") as f:
 o = subprocess.run(["pacman","-Qq"],capture_output=True)
 installed = o.stdout.decode().split("\n")
 for s in will_install:
-    if s not in installed and "perl" not in s:
+    if s.strip() not in installed and "perl" not in s:
         print(s)
