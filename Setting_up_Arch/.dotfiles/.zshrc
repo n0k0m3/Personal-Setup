@@ -43,6 +43,9 @@ zstyle ':z4h:ssh:*'                   enable 'yes'
 # enabled hosts.
 # zstyle ':z4h:ssh:*' send-extra-files '~/.nanorc' '~/.env.zsh'
 
+# Disable zsh-syntax-highlighting
+zstyle ':z4h:zsh-syntax-highlighting' channel 'none'
+
 # Clone additional Git repositories from GitHub.
 #
 # This doesn't do anything apart from cloning the repository and keeping it
@@ -104,4 +107,3 @@ setopt glob_dots     # no special treatment for file names with a leading dot
 setopt no_auto_menu  # require an extra TAB press to open the completion menu
 
 alias lsa="ls -lah"
-zstyle ':z4h:zsh-syntax-highlighting' channel 'none'
