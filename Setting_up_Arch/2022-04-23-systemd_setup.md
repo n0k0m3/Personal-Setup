@@ -68,9 +68,3 @@ sudo sh -c "$(curl -fsSL https://raw.githubusercontent.com/n0k0m3/Personal-Setup
 ```
 
 This will use `hmac-secret` extension of FIDO2 protocol. This method is compatible with almost all FIDO2 devices (I'm using Yubico Security Key (Blue Key) as I can just use a single U2F key to unlock all OpenPGP, smart card, and OTP keys instead of storing them).
-
-## Script Source code
-
-[Download systemd_setup.sh](systemd_setup.sh){: .btn }
-
-[Download fido2_luks_setup.sh](fido2_luks_setup.sh){: .btn }

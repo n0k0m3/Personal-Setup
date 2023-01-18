@@ -14,8 +14,6 @@ last_modified_at: 2022-06-19
 
 I don't need anything more fancy than romkatv's `zsh4humans`
 
-[Download setup.sh source code](setup.sh){: .btn }
-
 ```sh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/n0k0m3/Personal-Setup/main/Setting_up_Arch/setup.sh)"
 ```
@@ -44,15 +42,13 @@ Set compile flags `CFLAGS="-march=native -mtune=native ..."` and `MAKEFLAGS="-j1
 
 ## Comparing current installation with installed packages of previous dist
 
-[Download read_install.py](read_install.py){: .btn }
-
 ```sh
 python3 read_install.py <installed.log file>
 ```
 
 ### Update `installed.log` with current setup
 
-[Download export_install_deps.py](export_install_deps.py){: .btn }
+[Download export_install_deps.py](https://raw.githubusercontent.com/n0k0m3/Personal-Setup/main/Setting_up_Arch/export_install_deps.py){: .btn .btn--info }
 
 ```sh
 python export_install_deps.py --installed -q > installed.log

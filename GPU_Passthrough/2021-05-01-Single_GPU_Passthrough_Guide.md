@@ -546,12 +546,6 @@ To use patched vBIOS, edit VM's configuration to include patched vBIOS inside **
 ...
 ```
 
-# Script Source code
-
-[Download iommu.sh](iommu.sh){: .btn }
-
-[Download usb_iommu.sh](usb_iommu.sh){: .btn }
-
 # References & See Also
 
 [VFIO Single GPU Passthrough Configuration by Karuri](https://gitlab.com/Karuri/vfio)  
