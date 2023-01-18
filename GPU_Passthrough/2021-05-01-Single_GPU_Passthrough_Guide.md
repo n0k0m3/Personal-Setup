@@ -1,15 +1,19 @@
 ---
-layout: default
-title: VFIO Single GPU Passthrough
-parent: Personal Projects
-nav_order: 4
+excerpt_separator: "<!--more-->"
+categories:
+  - Personal Projects
+  - Linux
+tags:
+  - Arch Linux
+  - GPU
+  - VFIO
+title: VFIO Single GPU Passthrough Guide on Linux
+last_modified_at: 2022-04-25
 ---
-
-# VFIO Single GPU Passthrough Guide on Linux
 
 ## Table of content
 
-- [VFIO Single GPU Passthrough Guide on Linux](#vfio-single-gpu-passthrough-guide-on-linux)
+- VFIO Single GPU Passthrough Guide on Linux
   - [Table of content](#table-of-content)
   - [1. Notes](#1-notes)
   - [2. Host Machine Settings](#2-host-machine-settings)
@@ -544,50 +548,9 @@ To use patched vBIOS, edit VM's configuration to include patched vBIOS inside **
 
 # Script Source code
 
-<div class="code-example" markdown="1">
-
 [Download iommu.sh](iommu.sh){: .btn }
 
-</div>
-{% capture iommu %}
-{% highlight shell linenos %}
-#!/bin/bash
-shopt -s nullglob
-
-for iommu_group in $(find /sys/kernel/iommu_groups/ -maxdepth 1 -mindepth 1 -type d);do
-    echo "IOMMU group $(basename "$iommu_group")";
-    for device in $(\ls -1 "$iommu_group"/devices/); do
-        if ! [[ -e "$iommu_group"/devices/"$device"/reset ]]; then
-            echo -n "[NORES]";
-        fi;
-        echo -n $'\t';lspci -nns "$device";
-    done;
-    echo;
-done;
-{% endhighlight %}
-{% endcapture %}
-{% include fix_linenos.html code=iommu %}
-
-<div class="code-example" markdown="1">
-
 [Download usb_iommu.sh](usb_iommu.sh){: .btn }
-
-</div>
-{% capture usb_iommu %}
-{% highlight shell linenos %}
-#!/bin/bash
-shopt -s nullglob
-
-for usb_ctrl in /sys/bus/pci/devices/*/usb*; do
-    pci_path=${usb_ctrl%/*};
-    iommu_group=$(readlink $pci_path/iommu_group);
-    echo "Bus $(cat $usb_ctrl/busnum) --> ${pci_path##*/} (IOMMU group ${iommu_group##*/})";
-    lsusb -s ${usb_ctrl#*/usb}:;
-    echo;
-done
-{% endhighlight %}
-{% endcapture %}
-{% include fix_linenos.html code=usb_iommu %}
 
 # References & See Also
 

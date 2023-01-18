@@ -1,11 +1,16 @@
 ---
-layout: default
+excerpt_separator: "<!--more-->"
+categories:
+  - Personal Projects
+  - Linux
+tags:
+  - Arch Linux
+  - GPU
+  - Docker
+  - Tensorflow
 title: Tensorflow with GPU support in Docker
-parent: Personal Projects
-nav_order: 2    
+last_modified_at: 2022-04-24
 ---
-
-# Running Tensorflow with GPU support (NVIDIA) in docker
 
 Following guide was tested on EndeavourOS and Manjaro (Arch-based) Linux distro.
 

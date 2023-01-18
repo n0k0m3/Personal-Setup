@@ -1,12 +1,14 @@
 ---
-layout: default
-title: Tips and Tricks
-parent: Arch Linux Setup
-grand_parent: Personal Projects
-nav_order: 4
+excerpt_separator: "<!--more-->"
+categories:
+  - Personal Projects
+  - Linux
+tags:
+  - Arch Linux
+  - Setting up Arch
+title: Setting up Arch - Part 4 - Tips and Tricks
+last_modified_at: 2022-05-03
 ---
-
-# Tips and Tricks
 
 ## `fstab` mount with user permssion
 

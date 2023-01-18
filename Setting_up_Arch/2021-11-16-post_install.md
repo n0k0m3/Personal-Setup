@@ -1,12 +1,14 @@
 ---
-layout: default
-title: Post-Installation Setup
-parent: Arch Linux Setup
-grand_parent: Personal Projects
-nav_order: 3
+excerpt_separator: "<!--more-->"
+categories:
+  - Personal Projects
+  - Linux
+tags:
+  - Arch Linux
+  - Setting up Arch
+title: Setting up Arch - Part 3 - Post-Installation Setup
+last_modified_at: 2022-06-19
 ---
-
-# Post-Installation Setup
 
 ## Install [`zsh4humans`](https://github.com/romkatv/zsh4humans)
 
