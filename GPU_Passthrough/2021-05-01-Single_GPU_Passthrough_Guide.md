@@ -2,42 +2,22 @@
 excerpt_separator: "<!--more-->"
 categories:
   - Personal Projects
-  - Linux
 tags:
-  - Arch Linux
+  - Linux
   - GPU
   - VFIO
 title: VFIO Single GPU Passthrough Guide on Linux
 last_modified_at: 2022-04-25
+toc: true
 ---
 
-## Table of content
+Why single GPU passthrough? Because I'm poor, using Ryzen non-APU CPU, and I don't want to buy a second GPU just for passthrough. I'm using a single GPU passthrough for gaming on Windows and using Linux as my daily driver. 
 
-- VFIO Single GPU Passthrough Guide on Linux
-  - [Table of content](#table-of-content)
-  - [1. Notes](#1-notes)
-  - [2. Host Machine Settings](#2-host-machine-settings)
-    - [2.1 Enable & Verify IOMMU](#21-enable--verify-iommu)
-      - [2.1.1 Enabling IOMMU in BIOS](#211-enabling-iommu-in-bios)
-      - [2.1.2 Add kernel for IOMMU in GRUB](#212-add-kernel-for-iommu-in-grub)
-      - [2.1.3 Checking IOMMU](#213-checking-iommu)
-      - [2.1.4 IOMMU group](#214-iommu-group)
-    - [2.2 Installing Packages](#22-installing-packages)
-    - [2.3 Enable required services](#23-enable-required-services)
-  - [3. Setup Virtual Machine](#3-setup-virtual-machine)
-    - [3.1 Setting up VM and install Guest OS (Windows 10)](#31-setting-up-vm-and-install-guest-os-windows-10)
-    - [3.2 Attaching PCI devices](#32-attaching-pci-devices)
-      - [3.2.1 Video card driver virtualisation detection](#321-video-card-driver-virtualisation-detection)
-    - [3.3 Keyboard/Mouse/Audio Passthrough](#33-keyboardmouseaudio-passthrough)
-    - [3.4 USB Controller Passthrough](#34-usb-controller-passthrough)
-  - [4. Libvirt Hooks](#4-libvirt-hooks)
-  - [5. vBIOS Patching (No need for my setup)](#5-vbios-patching-no-need-for-my-setup)
-- [Script Source code](#script-source-code)
-- [References & See Also](#references--see-also)
+In this guide, we will be going over how to set up a single GPU passthrough on Linux. This guide is meant to be a reference for myself and others who want to learn how to set up a single GPU passthrough on Linux. I'm using Arch Linux as the host OS, but this guide should work on any Linux distro.
 
 ## 1. Notes
 
-[Return to ToC &#x21ba;](#table-of-content)
+
 
 Most of these commands will be run under `root`.
 
@@ -51,13 +31,13 @@ sudo su -
 
 #### 2.1.1 Enabling IOMMU in BIOS
 
-[Return to ToC &#x21ba;](#table-of-content)
+
 
 Varies and depends on motherboard. Follow this guide: [Arch Wiki](https://wiki.archlinux.org/index.php/PCI_passthrough_via_OVMF#Enabling_IOMMU)
 
 #### 2.1.2 Add kernel for IOMMU in GRUB
 
-[Return to ToC &#x21ba;](#table-of-content)
+
 
 Add these flags to the end of `GRUB_CMDLINE_LINUX_DEFAULT` variable
 
@@ -78,7 +58,7 @@ Reboot your system for the changes to take effect.
 
 #### 2.1.3 Checking IOMMU
 
-[Return to ToC &#x21ba;](#table-of-content)
+
 
 By this point IOMMU should be enabled. Check if there's a return
 
@@ -123,7 +103,7 @@ Install `linux-zen` (available as binary) or any `linux-xanmod` (build from sour
 
 ### 2.2 Installing Packages
 
-[Return to ToC &#x21ba;](#table-of-content)
+
 
 **Arch Linux**
 
@@ -151,7 +131,7 @@ apt install qemu-kvm qemu-utils libvirt-daemon-system libvirt-clients bridge-uti
 
 ### 2.3 Enable required services
 
-[Return to ToC &#x21ba;](#table-of-content)
+
 
 ```sh
 systemctl enable --now libvirtd
@@ -176,7 +156,7 @@ Following is the guide to create a VM similar to my setup.
 
 ### 3.1 Setting up VM and install Guest OS (Windows 10)
 
-[Return to ToC &#x21ba;](#table-of-content)
+
 
 **_NOTE: You should replace win10 with your VM's name where applicable_** \
 You should add your user to **_libvirt_** group to be able to run VM without root. And, **_input_** and **_kvm_** group for passing input devices.
@@ -197,7 +177,7 @@ usermod -aG kvm,input,libvirt $USER
 
 ### 3.2 Attaching PCI devices
 
-[Return to ToC &#x21ba;](#table-of-content)
+
 
 **Keep `Display Spice` and `Video QXL` for debugging**  
 Remove `Channel Spice`, `Sound ich*` and other unnecessary devices.  
@@ -205,7 +185,7 @@ Now, click on **_Add Hardware_**, select **_PCI Host Device_** and add the PCI H
 
 #### 3.2.1 Video card driver virtualisation detection
 
-[Return to ToC &#x21ba;](#table-of-content)
+
 
 Spoof Hyper-V Vendor ID for GPU guest drivers (AMD).
 
@@ -247,13 +227,13 @@ NVIDIA guest drivers prior to version 465 require hiding the KVM CPU leaf (avoid
 
 ### 3.3 Keyboard/Mouse/Audio Passthrough
 
-[Return to ToC &#x21ba;](#table-of-content)
+
 
 I won't be using passthrough as the latency and complicated setup is not worth it. Follow [USB Controller Passthrough](#usb-controller-passthrough)
 
 ### 3.4 USB Controller Passthrough
 
-[Return to ToC &#x21ba;](#table-of-content)
+
 
 Passing through Audio through PulseAudio is laggy, and passing Keyboard/Mouse/Audio is complicated. Also, you won't be able to use the main machine in Single GPU Passthrough setup anyway.
 
@@ -344,7 +324,7 @@ Due to [reset problem](https://wiki.archlinux.org/title/PCI_passthrough_via_OVMF
 
 ## 4. Libvirt Hooks
 
-[Return to ToC &#x21ba;](#table-of-content)
+
 
 Libvirt hooks automate the process of running specific tasks during VM state change. \
 More info at: [PassthroughPost](https://passthroughpo.st/simple-per-vm-libvirt-hooks-with-the-vfio-tools-hook-helper/)
@@ -510,7 +490,7 @@ systemctl start display-manager
 
 ## 5. vBIOS Patching (No need for my setup)
 
-[Return to ToC &#x21ba;](#table-of-content)
+
 
 **_NOTE: vBIOS patching is not patching directly into the hardware. You only patch the dumped ROM file._** \
 While most of the GPU can be passed with stock vBIOS, some GPU requires vBIOS patching depending on your host distro. \
@@ -546,7 +526,7 @@ To use patched vBIOS, edit VM's configuration to include patched vBIOS inside **
 ...
 ```
 
-# References & See Also
+## References & See Also
 
 [VFIO Single GPU Passthrough Configuration by Karuri](https://gitlab.com/Karuri/vfio)  
 [Single GPU Passthrough by joeknock90](https://github.com/joeknock90/Single-GPU-Passthrough)  
