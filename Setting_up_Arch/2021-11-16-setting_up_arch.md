@@ -47,7 +47,7 @@ sudo sh -c "$(curl -fsSL https://raw.githubusercontent.com/n0k0m3/Personal-Setup
 And Done!
 </s>
 
-## References:
+## References
 
 - https://discovery.endeavouros.com/btrfs/btrfs-resume-and-hibernate-setup/2021/12/
 - https://discovery.endeavouros.com/encrypted-installation/btrfsonluks-quick-copy-paste-version/2021/03/

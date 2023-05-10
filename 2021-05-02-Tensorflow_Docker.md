@@ -55,7 +55,7 @@ Check if GPU is available inside docker
 docker run --gpus all nvidia/cuda:11.3.0-runtime-ubuntu20.04 nvidia-smi
 ```
 
-## Remap user:
+### Remap user
 
 This will remap **ALL** users in docker to the current host-non-root (sudoer) user.
 
@@ -131,7 +131,7 @@ Next time to start the container:
 docker start ds
 ```
  -->
-## Setup
+### Common exposed ports setups
 
 - `tensorflow/tensorflow:latest-gpu-jupyter` as `tf` for DL/AI training tasks
     - 6006 - Tensorboard
@@ -174,6 +174,7 @@ sudo chattr +C /var/lib/docker
 ```
 
 - Restart docker
+
 ```
 sudo systemctl restart docker.service
 ```
