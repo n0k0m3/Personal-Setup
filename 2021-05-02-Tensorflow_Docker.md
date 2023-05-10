@@ -2,9 +2,8 @@
 excerpt_separator: "<!--more-->"
 categories:
   - Personal Projects
-  - Linux
 tags:
-  - Arch Linux
+  - Linux
   - GPU
   - Docker
   - Tensorflow

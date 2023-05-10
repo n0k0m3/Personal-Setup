@@ -1,11 +1,9 @@
 ---
 excerpt_separator: "<!--more-->"
 categories:
-  - Personal Projects
-  - Linux
-tags:
-  - Arch Linux
   - Setting up Arch
+tags:
+  - Linux
 title: Setting up Arch - Part 4 - Tips and Tricks
 last_modified_at: 2022-05-03
 ---
