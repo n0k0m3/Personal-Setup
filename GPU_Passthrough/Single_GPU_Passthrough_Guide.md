@@ -7,8 +7,9 @@ tags:
   - GPU
   - VFIO
 title: VFIO Single GPU Passthrough Guide on Linux
-last_modified_at: 2022-04-25
-toc: true
+date: 2021-05-01
+lastmod: 2022-04-25
+showtoc: true
 ---
 
 Why single GPU passthrough? Because I'm poor, using Ryzen non-APU CPU, and I don't want to buy a second GPU just for passthrough. I'm using a single GPU passthrough for gaming on Windows and using Linux as my daily driver. 

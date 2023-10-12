@@ -5,7 +5,8 @@ categories:
 tags:
   - Linux
 title: Setting up Arch - Part 5 - Bugs Fixes
-last_modified_at: 2022-05-03
+date: 2022-05-03
+lastmod: 2022-05-03
 ---
 
 ## OBS Studio flickering with Intel Graphics

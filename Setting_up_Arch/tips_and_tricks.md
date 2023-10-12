@@ -5,7 +5,8 @@ categories:
 tags:
   - Linux
 title: Setting up Arch - Part 4 - Tips and Tricks
-last_modified_at: 2022-05-03
+date: 2021-11-18
+lastmod: 2022-05-03
 ---
 
 ## `fstab` mount with user permssion

@@ -5,7 +5,8 @@ categories:
 tags:
   - Linux
 title: Setting up Arch - Part 1 - Swap on BTRFS
-last_modified_at: 2023-01-16
+date: 2021-11-15
+lastmod: 2023-01-16
 ---
 
 This is setup on EndeavourOS/Manjaro, on barebone Arch should be a little bit different (install `yay` before all of these steps)

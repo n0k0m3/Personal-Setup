@@ -5,7 +5,8 @@ categories:
 tags:
   - Linux
 title: Setting up Arch - Part 3 - Post-Installation Setup
-last_modified_at: 2022-06-19
+date: 2021-11-17
+lastmod: 2022-06-19
 ---
 
 ## Install [`zsh4humans`](https://github.com/romkatv/zsh4humans)

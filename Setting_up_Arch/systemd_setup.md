@@ -5,7 +5,8 @@ categories:
 tags:
   - Linux
 title: "Setting up Arch - Part 2 - `systemd` hooks with FIDO2 unlock"
-last_modified_at: 2022-05-03
+date: 2021-11-16
+lastmod: 2022-05-03
 ---
 
 By default Arch-based distros uses `busybox` init, which doesn’t support some features comfort from `systemd`. This guide will help you to setup `systemd` hooks, switch encryption to LUKS2 for `systemd-cryptenroll`, use U2F/FIDO2 key to unlock at boot, and `Plymouth` for boot splash screen.
